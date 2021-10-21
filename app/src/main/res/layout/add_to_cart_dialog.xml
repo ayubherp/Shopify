@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="dataItem"
+            type="com.example.shopify.model.Item"/>
+        <variable
+            name="imgURL"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/dialog_layout"
+        >
+
+        <ImageView
+            android:id="@+id/imageDialog"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="40dp"
+            app:imgURL="@{dataItem.linkPic}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brand"
+            app:layout_constraintTop_toBottomOf="@+id/imageDialog"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/merkDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{dataItem.name}"
+            android:hint="Brand"
+            app:layout_constraintTop_toBottomOf="@+id/brand"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Type"
+            app:layout_constraintTop_toBottomOf="@+id/merkDialog"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/typeDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{dataItem.type}"
+            android:hint="Type"
+            app:layout_constraintTop_toBottomOf="@+id/type"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price"
+            app:layout_constraintTop_toBottomOf="@+id/typeDialog"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            />
+
+        <TextView
+            android:id="@+id/priceDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type"
+            android:text="@{String.valueOf(dataItem.price)}"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/price"
+            tools:layout_editor_absoluteX="0dp" />
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:text="ADD TO CART"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/teal_700"
+            app:layout_constraintTop_toBottomOf="@+id/priceDialog"
+            android:textAlignment="center"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

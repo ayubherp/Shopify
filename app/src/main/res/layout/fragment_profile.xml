@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="user"
+            type="com.example.shopify.model.User"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.profile.">
+
+        <TextView
+            android:id="@+id/txtYour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your Profile"
+            android:textAlignment="center"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/boy"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtYour">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/label_name"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            app:layout_constraintTop_toBottomOf="@+id/ivProfile"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{user.name}"
+            android:hint="Name"
+            app:layout_constraintTop_toBottomOf="@+id/label_name"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/label_alamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Alamat"
+            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/user_alamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@{user.alamat}"
+            android:hint="Alamat"
+            app:layout_constraintTop_toBottomOf="@+id/label_alamat"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/label_username"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/username"
+            app:layout_constraintTop_toBottomOf="@+id/user_alamat"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/user_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{user.username}"
+            android:hint="@string/username"
+            app:layout_constraintTop_toBottomOf="@+id/label_username"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textAlignment="center"/>
+
+        <Button
+            android:id="@+id/btnMap"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
+            android:text="MAP"
+            android:textSize="22sp"
+            android:backgroundTint="@color/teal_700"
+            app:layout_constraintTop_toBottomOf="@+id/user_username"/>
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginEnd="120dp"
+            android:text="LOGOUT"
+            android:textSize="14sp"
+            android:backgroundTint="#FF0000"
+            app:layout_constraintTop_toBottomOf="@+id/btnMap"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

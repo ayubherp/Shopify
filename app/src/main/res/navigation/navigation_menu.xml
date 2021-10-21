@@ -16,6 +16,11 @@
         tools:layout="@layout/item_list_rv" />
 
     <fragment
+        android:id="@+id/navigation_announce"
+        android:label="Profile"
+        tools:layout="@layout/fragment_announce" />
+
+    <fragment
         android:id="@+id/navigation_profile"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />

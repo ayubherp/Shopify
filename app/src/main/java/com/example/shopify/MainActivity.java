@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.shopify.databinding.ActivityMainBinding;
+import com.example.shopify.ui.announce.AnnounceFragment;
 import com.example.shopify.ui.cart.CartActivity;
 import com.example.shopify.ui.home.HomeFragment;
 import com.example.shopify.ui.item.ItemFragment;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_item_list:
                         changeFragment(new ItemFragment());
+                        return true;
+                    case R.id.navigation_announce:
+                        changeFragment(new AnnounceFragment());
                         return true;
                     case R.id.navigation_profile:
                         changeFragment(new ProfileFragment());

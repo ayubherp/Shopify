@@ -29,6 +29,7 @@ public class CartItemFragment extends Fragment {
     private List<CartItem> cartItemList;
     private ListCartItemAdapter adapter;
     private FragmentCartItemBinding binding;
+
     public CartItemFragment(){
     }
     @Override

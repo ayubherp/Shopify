@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <RelativeLayout
+        android:id="@+id/fragment_announce"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:context=".ui.announce."
+        >
+        <TextView
+            android:id="@+id/txtAnnounce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Announce"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            />
+        <Button
+            android:id="@+id/btnGreet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtAnnounce"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="Greeting"
+            />
+        <Button
+            android:id="@+id/btnNewItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnGreet"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="New Item"
+            />
+        <Button
+            android:id="@+id/btnDevInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnNewItem"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="Developer Info"
+            />
+    </RelativeLayout>
+
+</layout>

@@ -1,6 +1,8 @@
 package com.example.shopify.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +12,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.shopify.database.DatabaseClient;
 import com.example.shopify.databinding.CartItemViewBinding;
+import com.example.shopify.databinding.FragmentCartItemBinding;
 import com.example.shopify.model.CartItem;
 import com.example.shopify.preferences.UserPreferences;
+import com.example.shopify.ui.cart.CartActivity;
+import com.example.shopify.ui.cart.CartItemFragment;
 
 import java.util.List;
 
@@ -26,6 +32,7 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
     private Context context;
     private DatabaseClient databaseClient;
     private UserPreferences userPreferences;
+    private FragmentCartItemBinding currentFragment;
 
     public ListCartItemAdapter(List<CartItem> data, Context context){
         this.cartItemList = data;
@@ -76,14 +83,25 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
                     cartItemList.remove(holder.getAdapterPosition());
                     notifyDataSetChanged();
+                    Intent intent = new Intent(context, CartActivity.class);
+                    context.startActivity(intent);
+                    ((Activity)context).finish();
                 }
                 else if(item.getAmount()>1)
                 {
                     int temp;
                     temp = item.getAmount() - 1;
                     item.setAmount(temp);
+                    databaseClient.getDatabase().listCartItemDao().updateItem(item);
+                    cartItemList.clear();
+                    cartItemList.addAll(databaseClient.getDatabase()
+                            .listCartItemDao().getCartsByUserId(
+                                    userPreferences.getUserLogin().getId()));
                     Toast.makeText(context, "Item reduced", Toast.LENGTH_SHORT).show();
                     notifyDataSetChanged();
+                    Intent intent = new Intent(context, CartActivity.class);
+                    context.startActivity(intent);
+                    ((Activity)context).finish();
                 }
             }
         });
@@ -99,8 +117,16 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                     int temp;
                     temp = item.getAmount() + 1;
                     item.setAmount(temp);
+                    databaseClient.getDatabase().listCartItemDao().updateItem(item);
+                    cartItemList.clear();
+                    cartItemList.addAll(databaseClient.getDatabase()
+                            .listCartItemDao().getCartsByUserId(
+                                    userPreferences.getUserLogin().getId()));
                     Toast.makeText(context, "Item added ", Toast.LENGTH_SHORT).show();
                     notifyDataSetChanged();
+                    Intent intent = new Intent(context, CartActivity.class);
+                    context.startActivity(intent);
+                    ((Activity)context).finish();
                 }
             }
         });
@@ -109,6 +135,18 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
     @Override
     public int getItemCount() {
         return cartItemList.size();
+    }
+
+    public List<CartItem> getItems(){ return cartItemList;}
+
+    public void removeCartItems(){
+        CartItem item;
+        for (int i=0;i<cartItemList.size();i++){
+            item = cartItemList.get(i);
+            databaseClient.getDatabase().listCartItemDao().deleteItem(item);
+            cartItemList.clear();
+        }
+        notifyDataSetChanged();
     }
 
 }

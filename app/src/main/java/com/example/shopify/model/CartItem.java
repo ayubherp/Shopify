@@ -2,16 +2,17 @@ package com.example.shopify.model;
 
 import android.widget.ImageView;
 
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import androidx.databinding.BindingAdapter;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
+import com.example.shopify.BR;
 
 @Entity(tableName = "items")
-public class CartItem {
+public class CartItem extends BaseObservable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -73,8 +74,10 @@ public class CartItem {
         return price;
     }
 
+    @Bindable
     public void setAmount(int amount) {
         this.amount = amount;
+        notifyPropertyChanged(BR.amount);
     }
 
     public int getAmount() {
@@ -100,15 +103,5 @@ public class CartItem {
     public String getLinkPic() {
         return linkPic;
     }
-
-    /*
-    @BindingAdapter("imgURL")
-    public static void loadImage(ImageView view, String imageUrl) {
-        Glide.with(view.getContext())
-                .load(imageUrl).apply(new RequestOptions().circleCrop())
-                .into(view);
-    }
-
-     */
 
 }

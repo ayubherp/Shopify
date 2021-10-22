@@ -27,8 +27,8 @@
             android:orientation="horizontal"
             android:padding="16dp">
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 app:imgURL="@{items.linkPic}"
                 android:id="@+id/imgCart"
                 />
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="8dp"
                 >
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -49,14 +49,14 @@
                         android:layout_height="wrap_content"
                         android:hint="Brand"
                         android:text="@{items.name}"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="-"
+                        android:text=" - "
                         android:textSize="16sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Type"
                         android:text="@{items.type}"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                 </LinearLayout>
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sub Total:"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -83,12 +83,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rp. "
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{String.valueOf(items.total)}"
+                        android:text="@{String.format(@string/format_money,items.total)}"
                         android:hint="XXXXXXX"
                         android:textSize="14sp"
                         />
@@ -97,20 +97,21 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginLeft="4dp"
+                android:layout_gravity=""
                 >
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_gravity="end">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Price : Rp."
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                     <TextView
@@ -118,27 +119,7 @@
                         android:layout_height="wrap_content"
                         android:hint="XXXXXXX"
                         android:text="@{String.valueOf(items.price)}"
-                        android:textSize="12sp"
-                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Amount : "
-                        android:textSize="12sp"
-                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="XX"
-                        android:text="@{String.valueOf(items.amount)}"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                 </LinearLayout>
@@ -146,26 +127,47 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_gravity="center"
+                    android:layout_gravity="end">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Amount : "
+                        android:textSize="14sp"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="XX"
+                        android:text="@{String.valueOf(items.amount)}"
+                        android:textSize="14sp"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="end"
                     android:layout_marginTop="15dp">
                     <ImageButton
                         android:id="@+id/btnRemoveItem"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:backgroundTint="#EF5350"
                         android:src="@drawable/ic_baseline_remove_24"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{items.amount}"
+                        android:text="@{String.valueOf(items.amount)}"
                         android:hint="XX"
                         android:textSize="12sp"
                         />
                     <ImageButton
                         android:id="@+id/btnAddItem"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:backgroundTint="@color/teal_700"
                         android:src="@drawable/ic_baseline_add_24"
                         />

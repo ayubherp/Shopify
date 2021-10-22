@@ -83,7 +83,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.viewHo
                                 LayoutInflater.from(v.getRootView().getContext()), R.layout.add_to_cart_dialog, null, false
                         );
                 addDialogBinding.setDataItem(item);
-                alertDialog.setCancelable(false);
                 alertDialog.setView(addDialogBinding.getRoot());
                 addDialogBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -83,9 +83,6 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
                     cartItemList.remove(holder.getAdapterPosition());
                     notifyDataSetChanged();
-                    Intent intent = new Intent(context, CartActivity.class);
-                    context.startActivity(intent);
-                    ((Activity)context).finish();
                 }
                 else if(item.getAmount()>1)
                 {

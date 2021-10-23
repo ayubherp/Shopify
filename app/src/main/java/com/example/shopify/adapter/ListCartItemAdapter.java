@@ -141,8 +141,8 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
         for (int i=0;i<cartItemList.size();i++){
             item = cartItemList.get(i);
             databaseClient.getDatabase().listCartItemDao().deleteItem(item);
-            cartItemList.clear();
         }
+        cartItemList.clear();
         notifyDataSetChanged();
     }
 

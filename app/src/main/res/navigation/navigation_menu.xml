@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/navigation_item_list"
         android:label="Item List"
-        tools:layout="@layout/item_list_rv" />
+        tools:layout="@layout/fragment_item" />
 
     <fragment
         android:id="@+id/navigation_announce"

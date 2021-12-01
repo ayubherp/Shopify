@@ -7,7 +7,7 @@ import java.util.List;
 public class CartResponse {
     private String message;
 
-    @SerializedName("carts")
+    @SerializedName("cart")
     private List<Cart> cartList;
 
     public String getMessage() {

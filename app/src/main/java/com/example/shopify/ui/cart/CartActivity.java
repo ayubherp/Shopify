@@ -10,7 +10,6 @@ import android.view.View;
 import com.example.shopify.MainActivity;
 import com.example.shopify.R;
 import com.example.shopify.databinding.ActivityCartBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class CartActivity extends AppCompatActivity {
     ActivityCartBinding binding;
@@ -22,7 +21,7 @@ public class CartActivity extends AppCompatActivity {
         binding = ActivityCartBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        changeFragment(new CartItemFragment());
+        changeFragment(new CartFragment());
         binding.btnHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

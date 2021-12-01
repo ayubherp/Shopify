@@ -24,7 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.shopify.R;
-import com.example.shopify.adapter.ListCartItemAdapter;
+import com.example.shopify.adapter.CartAdapter;
 import com.example.shopify.database.DatabaseClient;
 import com.example.shopify.databinding.FragmentCartItemBinding;
 import com.example.shopify.model.Cart;
@@ -33,22 +33,22 @@ import com.example.shopify.preferences.UserPreferences;
 
 import java.util.List;
 
-public class CartItemFragment extends Fragment {
+public class CartFragment extends Fragment {
     private User user;
     private UserPreferences userPreferences;
     private List<Cart> cartList;
-    private ListCartItemAdapter adapter;
+    private CartAdapter adapter;
     private FragmentCartItemBinding binding;
     private NotificationManagerCompat notificationManager;
     private Notification notification;
 
-    public CartItemFragment(){
+    public CartFragment(){
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_cart_item, container, false);
+                inflater, R.layout.fragment_cart, container, false);
         userPreferences = new UserPreferences(getContext().getApplicationContext());
         user = userPreferences.getUserLogin();
         binding.rvCartItems.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -127,7 +127,7 @@ public class CartItemFragment extends Fragment {
             @Override
             protected void onPostExecute(List<Cart> cartItems) {
                 super.onPostExecute(cartItems);
-                adapter = new ListCartItemAdapter(cartItems, getContext());
+                adapter = new CartAdapter(cartItems, getContext());
                 binding.rvCartItems.setAdapter(adapter);
                 cartList = adapter.getItems();
                 binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));

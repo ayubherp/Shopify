@@ -28,14 +28,13 @@ import com.example.shopify.preferences.UserPreferences;
 
 import java.util.ArrayList;
 
-public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.viewHolderItem>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem>{
     private final ArrayList<Item> listItem;
-    private DatabaseClient databaseClient;
     private Context context;
     private UserPreferences userPreferences;
     private Item item;
 
-    public ItemListAdapter(ArrayList<Item> data, Context context){
+    public ItemAdapter(ArrayList<Item> data, Context context){
         listItem = data;
         this.context = context;
         this.userPreferences = new UserPreferences(context);

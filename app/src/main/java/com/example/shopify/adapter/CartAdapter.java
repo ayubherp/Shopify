@@ -21,20 +21,26 @@ import com.example.shopify.ui.cart.CartActivity;
 
 import java.util.List;
 
-public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapter.viewHolderItem>{
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderItem>{
     private List<Cart> cartList;
     private Context context;
-    private DatabaseClient databaseClient;
     private UserPreferences userPreferences;
     private FragmentCartItemBinding currentFragment;
 
-    public ListCartItemAdapter(List<Cart> data, Context context){
+    public CartAdapter(List<Cart> data, Context context){
         this.cartList = data;
         this.context = context;
         this.userPreferences= new UserPreferences(context);
-        notifyDataSetChanged();
     }
 
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.item_produk, parent, false);
+
+        return new ViewHolder(view);
+    }
     public class viewHolderItem extends RecyclerView.ViewHolder {
         CartItemViewBinding cartItemBinding;
         public viewHolderItem(@NonNull CartItemViewBinding cartItemBinding){

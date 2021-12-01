@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.shopify.AdminActivity;
 import com.example.shopify.MainActivity;
 import com.example.shopify.R;
 import com.example.shopify.database.DatabaseClient;
@@ -34,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         btnClear = findViewById(R.id.btnClear);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
+
 
         /* Apps will check the login first from shared preferences */
         checkLogin();

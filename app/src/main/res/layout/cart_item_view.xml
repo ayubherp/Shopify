@@ -6,7 +6,7 @@
     <data>
         <variable
             name="items"
-            type="com.example.shopify.model.CartItem"/>
+            type="com.example.shopify.model.Cart"/>
         <variable
             name="imgURL"
             type="String" />

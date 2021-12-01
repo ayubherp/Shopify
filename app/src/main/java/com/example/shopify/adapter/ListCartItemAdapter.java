@@ -7,35 +7,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.BindingAdapter;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.shopify.database.DatabaseClient;
 import com.example.shopify.databinding.CartItemViewBinding;
 import com.example.shopify.databinding.FragmentCartItemBinding;
-import com.example.shopify.model.CartItem;
+import com.example.shopify.model.Cart;
 import com.example.shopify.preferences.UserPreferences;
 import com.example.shopify.ui.cart.CartActivity;
-import com.example.shopify.ui.cart.CartItemFragment;
 
 import java.util.List;
 
 public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapter.viewHolderItem>{
-    private List<CartItem> cartItemList;
+    private List<Cart> cartList;
     private Context context;
     private DatabaseClient databaseClient;
     private UserPreferences userPreferences;
     private FragmentCartItemBinding currentFragment;
 
-    public ListCartItemAdapter(List<CartItem> data, Context context){
-        this.cartItemList = data;
+    public ListCartItemAdapter(List<Cart> data, Context context){
+        this.cartList = data;
         this.context = context;
         this.userPreferences= new UserPreferences(context);
         notifyDataSetChanged();
@@ -54,7 +48,7 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                 }
             });
         }
-        public void bindView(CartItem item)
+        public void bindView(Cart item)
         {
             cartItemBinding.setItems(item);
         }
@@ -70,8 +64,8 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        holder.bindView(cartItemList.get(position));
-        CartItem item = cartItemList.get(position);
+        holder.bindView(cartList.get(position));
+        Cart item = cartList.get(position);
         databaseClient = DatabaseClient.getInstance(context);
 
         holder.cartItemBinding.btnRemoveItem.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +75,7 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                 {
                     databaseClient.getDatabase().listCartItemDao().deleteItem(item);
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                    cartItemList.remove(holder.getAdapterPosition());
+                    cartList.remove(holder.getAdapterPosition());
                     notifyDataSetChanged();
                 }
                 else if(item.getAmount()>1)
@@ -90,8 +84,8 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                     temp = item.getAmount() - 1;
                     item.setAmount(temp);
                     databaseClient.getDatabase().listCartItemDao().updateItem(item);
-                    cartItemList.clear();
-                    cartItemList.addAll(databaseClient.getDatabase()
+                    cartList.clear();
+                    cartList.addAll(databaseClient.getDatabase()
                             .listCartItemDao().getCartsByUserId(
                                     userPreferences.getUserLogin().getId()));
                     Toast.makeText(context, "Item reduced", Toast.LENGTH_SHORT).show();
@@ -115,8 +109,8 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
                     temp = item.getAmount() + 1;
                     item.setAmount(temp);
                     databaseClient.getDatabase().listCartItemDao().updateItem(item);
-                    cartItemList.clear();
-                    cartItemList.addAll(databaseClient.getDatabase()
+                    cartList.clear();
+                    cartList.addAll(databaseClient.getDatabase()
                             .listCartItemDao().getCartsByUserId(
                                     userPreferences.getUserLogin().getId()));
                     Toast.makeText(context, "Item added ", Toast.LENGTH_SHORT).show();
@@ -131,18 +125,18 @@ public class ListCartItemAdapter extends RecyclerView.Adapter<ListCartItemAdapte
 
     @Override
     public int getItemCount() {
-        return cartItemList.size();
+        return cartList.size();
     }
 
-    public List<CartItem> getItems(){ return cartItemList;}
+    public List<Cart> getItems(){ return cartList;}
 
     public void removeCartItems(){
-        CartItem item;
-        for (int i=0;i<cartItemList.size();i++){
-            item = cartItemList.get(i);
+        Cart item;
+        for (int i = 0; i< cartList.size(); i++){
+            item = cartList.get(i);
             databaseClient.getDatabase().listCartItemDao().deleteItem(item);
         }
-        cartItemList.clear();
+        cartList.clear();
         notifyDataSetChanged();
     }
 

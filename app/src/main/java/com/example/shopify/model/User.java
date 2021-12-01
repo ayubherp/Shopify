@@ -4,40 +4,27 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "users")
 public class User {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
-    @ColumnInfo(name = "username")
-    private String username;
-
-    @ColumnInfo(name = "password")
+    private Long id;
+    private String name;
+    private String email;
     private String password;
 
-    @ColumnInfo(name = "name")
-    private String name;
-
-    @ColumnInfo(name = "alamat")
-    private String alamat;
-
-    public User(int id, String name, String alamat, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
+    public User(String name, String email, String password) {
         this.name = name;
-        this.alamat = alamat;
+        this.email = email;
+        this.password = password;
     }
 
     public User(){
         //nothing
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,20 +36,12 @@ public class User {
         this.name = name;
     }
 
-    public String getAlamat() {
-        return alamat;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAlamat(String alamat) {
-        this.alamat = alamat;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

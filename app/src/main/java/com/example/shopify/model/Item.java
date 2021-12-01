@@ -1,48 +1,57 @@
 package com.example.shopify.model;
 
 public class Item {
-    public String name;
-    public double price;
-    public String type;
-    public String linkPic;
+    private Long id;
+    private String name;
+    private double price;
+    private String type;
+    private String image;
 
-    public Item(String name, String type, double price, String linkPic)
+    public Item(String name, String type, double price, String image)
     {
         this.name = name;
         this.price = price;
         this.type = type;
-        this.linkPic = linkPic;
+        this.image = image;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setLinkPic(String linkPic) {
-        this.linkPic = linkPic;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getLinkPic() {
-        return linkPic;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

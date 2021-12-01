@@ -22,25 +22,21 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.shopify.MainActivity;
 import com.example.shopify.R;
 import com.example.shopify.adapter.ListCartItemAdapter;
 import com.example.shopify.database.DatabaseClient;
 import com.example.shopify.databinding.FragmentCartItemBinding;
-import com.example.shopify.model.CartItem;
-import com.example.shopify.model.NotificationReceiver;
+import com.example.shopify.model.Cart;
 import com.example.shopify.model.User;
 import com.example.shopify.preferences.UserPreferences;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CartItemFragment extends Fragment {
     private User user;
     private UserPreferences userPreferences;
-    private List<CartItem> cartItemList;
+    private List<Cart> cartList;
     private ListCartItemAdapter adapter;
     private FragmentCartItemBinding binding;
     private NotificationManagerCompat notificationManager;
@@ -61,7 +57,7 @@ public class CartItemFragment extends Fragment {
         binding.btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(totalPrice(cartItemList)!=0)
+                if(totalPrice(cartList)!=0)
                 {
                     //send notification
                     Intent activityIntent = new Intent(getContext(), CartActivity.class);
@@ -74,7 +70,7 @@ public class CartItemFragment extends Fragment {
                             .setContentTitle("Shopify Cart Mail")
                             .setContentText("~See detail~")
                             .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText("We charged your wallet balance : Rp. " +String.format("%.0f",totalPrice(cartItemList))
+                                    .bigText("We charged your wallet balance : Rp. " +String.format("%.0f",totalPrice(cartList))
                                             +". Item will send to your address : "+user.getAlamat() )
                                     .setBigContentTitle("Payment Confirmed")
                                     .setSummaryText("Summary"))
@@ -90,7 +86,7 @@ public class CartItemFragment extends Fragment {
 
                     //remove from cart database
                     adapter.removeCartItems();
-                    binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
+                    binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));
                     Toast.makeText(view.getRootView().getContext(), "Payment success", Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -103,7 +99,7 @@ public class CartItemFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 adapter.removeCartItems();
-                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
+                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));
                 Toast.makeText(v.getRootView().getContext(), "Reset Cart success", Toast.LENGTH_SHORT).show();
             }
         });
@@ -117,11 +113,11 @@ public class CartItemFragment extends Fragment {
     }
 
     private void getCartItems() {
-        class GetCartItems extends AsyncTask<Void, Void, List<CartItem>> {
+        class GetCartItems extends AsyncTask<Void, Void, List<Cart>> {
 
             @Override
-            protected List<CartItem> doInBackground(Void... voids) {
-                List<CartItem> itemList = DatabaseClient.getInstance(getContext())
+            protected List<Cart> doInBackground(Void... voids) {
+                List<Cart> itemList = DatabaseClient.getInstance(getContext())
                         .getDatabase()
                         .listCartItemDao()
                         .getCartsByUserId(userPreferences.getUserLogin().getId());
@@ -129,19 +125,19 @@ public class CartItemFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(List<CartItem> cartItems) {
+            protected void onPostExecute(List<Cart> cartItems) {
                 super.onPostExecute(cartItems);
                 adapter = new ListCartItemAdapter(cartItems, getContext());
                 binding.rvCartItems.setAdapter(adapter);
-                cartItemList = adapter.getItems();
-                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
+                cartList = adapter.getItems();
+                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));
             }
         }
         GetCartItems getCartItems = new GetCartItems();
         getCartItems.execute();
     }
 
-    public double totalPrice(List<CartItem> items){
+    public double totalPrice(List<Cart> items){
         double totalPrice = 0;
         for (int i=0; i<items.size();i++){
             totalPrice += items.get(i).getTotal();

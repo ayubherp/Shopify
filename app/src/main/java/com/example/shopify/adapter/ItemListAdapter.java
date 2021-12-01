@@ -22,7 +22,7 @@ import com.example.shopify.R;
 import com.example.shopify.database.DatabaseClient;
 import com.example.shopify.databinding.AddToCartDialogBinding;
 import com.example.shopify.databinding.ItemListViewBinding;
-import com.example.shopify.model.CartItem;
+import com.example.shopify.model.Cart;
 import com.example.shopify.model.Item;
 import com.example.shopify.preferences.UserPreferences;
 
@@ -118,13 +118,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.viewHo
 
             @Override
             protected Void doInBackground(Void... voids) {
-                CartItem cartItem = new CartItem(item.name, item.type, item.price,1,item.linkPic);
-                cartItem.setUser_id(userPreferences.getUserLogin().getId());
+                Cart cart = new Cart(item.getName(), item.getType(), item.getPrice(),1,item.getLinkPic());
+                cart.setUser_id(userPreferences.getUserLogin().getId());
 
                 DatabaseClient.getInstance(context.getApplicationContext())
                         .getDatabase()
                         .listCartItemDao()
-                        .insertItem(cartItem);
+                        .insertItem(cart);
 
                 return null;
             }

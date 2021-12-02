@@ -13,8 +13,7 @@ public class UserPreferences {
     public static final String IS_LOGIN = "isLogin";
     public static final String KEY_ID = "id";
     public static final String KEY_NAME = "name";
-    public static final String KEY_ADDRESS = "alamat";
-    public static final String KEY_USERNAME = "username";
+    public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
 
     public UserPreferences(Context context) {
@@ -24,15 +23,13 @@ public class UserPreferences {
         editor = sharedPreferences.edit();
     }
 
-    public void setUser(int id,String name, String alamat, String username, String password){
+    public void setUser(Long id,String name, String email){
 
         /* Menyimpan data login ke sharedPreferences dengan key dan value  */
         editor.putBoolean(IS_LOGIN, true);
-        editor.putInt(KEY_ID,id);
+        editor.putLong(KEY_ID,id);
         editor.putString(KEY_NAME,name);
-        editor.putString(KEY_ADDRESS,alamat);
-        editor.putString(KEY_USERNAME,username);
-        editor.putString(KEY_PASSWORD,password);
+        editor.putString(KEY_EMAIL,email);
 
         /* Jangan lupa commit karena kalo hanya set editonya saja tidak commit akan sia-sia */
         editor.commit();
@@ -40,16 +37,15 @@ public class UserPreferences {
 
     public User getUserLogin(){
         /* Mengembalikan object User untuk menampilkan data user jika user sudah login */
-        String name,alamat,username,password;
+        String name,email,password;
         int id;
 
         id = sharedPreferences.getInt(KEY_ID,0);
         name = sharedPreferences.getString(KEY_NAME,null);
-        alamat = sharedPreferences.getString(KEY_ADDRESS,null);
-        username = sharedPreferences.getString(KEY_USERNAME,null);
+        email = sharedPreferences.getString(KEY_EMAIL,null);
         password = sharedPreferences.getString(KEY_PASSWORD,null);
 
-        return new User(id,name,alamat,username,password);
+        return new User(name,email,password);
     }
 
     public boolean checkLogin(){

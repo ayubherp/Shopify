@@ -22,7 +22,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
 
     private List<User> userList;
     private Context context;
-    private UserViewBinding binding;
 
     public UserAdapter(List<User> userList, Context context) {
         this.userList = userList;
@@ -51,7 +50,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
     @Override
     public viewHolderUser onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        binding = UserViewBinding.inflate(inflater, parent, false);
+        UserViewBinding binding = UserViewBinding.inflate(inflater, parent, false);
         return new UserAdapter.viewHolderUser(binding);
     }
 

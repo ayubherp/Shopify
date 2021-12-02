@@ -1,5 +1,7 @@
 package com.example.shopify.adapter;
 
+import static com.android.volley.Request.Method.GET;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,118 +14,118 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.shopify.database.DatabaseClient;
-import com.example.shopify.databinding.CartItemViewBinding;
-import com.example.shopify.databinding.FragmentCartItemBinding;
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.shopify.R;
+import com.example.shopify.api.ItemApi;
+import com.example.shopify.databinding.CartViewBinding;
 import com.example.shopify.model.Cart;
+import com.example.shopify.model.Item;
+import com.example.shopify.model.ItemResponse;
 import com.example.shopify.preferences.UserPreferences;
 import com.example.shopify.ui.cart.CartActivity;
+import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderItem>{
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart>{
     private List<Cart> cartList;
+    private List<Item> itemList;
     private Context context;
-    private UserPreferences userPreferences;
-    private FragmentCartItemBinding currentFragment;
+    private RequestQueue queue;
 
-    public CartAdapter(List<Cart> data, Context context){
-        this.cartList = data;
+    public CartAdapter(List<Cart> cartList, List<Item> itemList, Context context){
+        this.cartList = cartList;
+        this.itemList = itemList;
         this.context = context;
-        this.userPreferences= new UserPreferences(context);
+        this.queue = Volley.newRequestQueue(context);
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_produk, parent, false);
 
-        return new ViewHolder(view);
-    }
-    public class viewHolderItem extends RecyclerView.ViewHolder {
-        CartItemViewBinding cartItemBinding;
-        public viewHolderItem(@NonNull CartItemViewBinding cartItemBinding){
-            super(cartItemBinding.getRoot());
-            this.cartItemBinding = cartItemBinding;
+    public class viewHolderCart extends RecyclerView.ViewHolder {
+        CartViewBinding binding;
+        public viewHolderCart(@NonNull CartViewBinding binding){
+            super(binding.getRoot());
+            this.binding = binding;
 
-            this.cartItemBinding.cartItem.setOnClickListener(new View.OnClickListener() {
+            this.binding.cartItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d("TEST", "onClick: " +getAdapterPosition());
                 }
             });
         }
-        public void bindView(Cart item)
+        public void bindView(Cart cart, Item item)
         {
-            cartItemBinding.setItems(item);
+            binding.setCarts(cart);
+            binding.setItems(item);
         }
     }
 
     @NonNull
     @Override
-    public viewHolderItem onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public viewHolderCart onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        CartItemViewBinding bindingItem = CartItemViewBinding.inflate(layoutInflater, parent, false);
-        return new viewHolderItem(bindingItem);
+        CartViewBinding bindingItem = CartViewBinding.inflate(layoutInflater, parent, false);
+        return new viewHolderCart(bindingItem);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        holder.bindView(cartList.get(position));
-        Cart item = cartList.get(position);
-        databaseClient = DatabaseClient.getInstance(context);
+    public void onBindViewHolder(@NonNull viewHolderCart holder, int position) {
+        holder.bindView(cartList.get(position), itemList.get(position));
+        Cart cart = cartList.get(position);
+        Item item = itemList.get(position);
 
-        holder.cartItemBinding.btnRemoveItem.setOnClickListener(new View.OnClickListener() {
+        holder.binding.btnRemoveItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (item.getAmount()==1)
+                if (cart.getAmount()==1)
                 {
-                    databaseClient.getDatabase().listCartItemDao().deleteItem(item);
-                    Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                    cartList.remove(holder.getAdapterPosition());
-                    notifyDataSetChanged();
+                    ((CartActivity) context).deleteCart(cart.getId());
                 }
-                else if(item.getAmount()>1)
+                else if(cart.getAmount()>1)
                 {
                     int temp;
-                    temp = item.getAmount() - 1;
-                    item.setAmount(temp);
-                    databaseClient.getDatabase().listCartItemDao().updateItem(item);
-                    cartList.clear();
-                    cartList.addAll(databaseClient.getDatabase()
-                            .listCartItemDao().getCartsByUserId(
-                                    userPreferences.getUserLogin().getId()));
-                    Toast.makeText(context, "Item reduced", Toast.LENGTH_SHORT).show();
-                    notifyDataSetChanged();
-                    Intent intent = new Intent(context, CartActivity.class);
-                    context.startActivity(intent);
-                    ((Activity)context).finish();
+                    temp = cart.getAmount() - 1;
+                    cart.setAmount(temp);
+                    cart.setSubtotal(item.getPrice()*temp);
+                    ((CartActivity) context).updateCart(
+                            cart.getId(),cart.getId_user(),cart.getId_item(),
+                            cart.getAmount(),cart.getSubtotal(),false);
                 }
             }
         });
-        holder.cartItemBinding.btnAddItem.setOnClickListener(new View.OnClickListener() {
+        holder.binding.btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(item.getAmount()>=50)
+                if(cart.getAmount()>=10)
                 {
                     Toast.makeText(context, "Can't add more", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     int temp;
-                    temp = item.getAmount() + 1;
-                    item.setAmount(temp);
-                    databaseClient.getDatabase().listCartItemDao().updateItem(item);
-                    cartList.clear();
-                    cartList.addAll(databaseClient.getDatabase()
-                            .listCartItemDao().getCartsByUserId(
-                                    userPreferences.getUserLogin().getId()));
+                    temp = cart.getAmount() + 1;
+                    cart.setAmount(temp);
+                    cart.setSubtotal(item.getPrice()*temp);
+                    ((CartActivity) context).updateCart(
+                            cart.getId(),cart.getId_user(),cart.getId_item(),
+                            cart.getAmount(),cart.getSubtotal(),false);
                     Toast.makeText(context, "Item added ", Toast.LENGTH_SHORT).show();
                     notifyDataSetChanged();
                     Intent intent = new Intent(context, CartActivity.class);
                     context.startActivity(intent);
-                    ((Activity)context).finish();
+                    ((CartActivity)context).finish();
                 }
             }
         });
@@ -134,13 +136,82 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderItem
         return cartList.size();
     }
 
-    public List<Cart> getItems(){ return cartList;}
+    public void setCartList(List<Cart> cartList) {
+        this.cartList = cartList;
+        for(int i=0; i<this.cartList.size();i++)
+        {
+            StringRequest stringRequest = new StringRequest(GET,
+                    ItemApi.GET_BY_ID_URL + this.cartList.get(i).getId_item(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Gson gson = new Gson();
+                    RequestOptions options = new RequestOptions()
+                            .centerCrop()
+                            .placeholder(R.mipmap.ic_launcher_round)
+                            .error(R.mipmap.ic_launcher_round);
+                    ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
+                    Item item = itemResponse.getItemList().get(0);
+                    itemList.add(item);
+//                Glide.with(getBaseContext()).load(produk.getGambar()).apply(options).into(ivGambar);
+//                etNama.setText(produk.getNama());
+//                etHarga.setText(produk.getHarga().toString());
+//                etDeskripsi.setText(produk.getDeskripsi());
+//                etStok.setText(produk.getStok().toString());
+//                Toast.makeText(AddEditActivity.this,
+//                        produkResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    try {
+                        String responseBody = new String(error.networkResponse.data,
+                                StandardCharsets.UTF_8);
+                        JSONObject errors = new JSONObject(responseBody);
+                        Toast.makeText(context, errors.getString("message"),
+                                Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(context, e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Accept", "application/json");
+                    return headers;
+                }
+            };
+            queue.add(stringRequest);
+        }
+    }
 
-    public void removeCartItems(){
-        Cart item;
+    public List<Item> getItemList(){
+        return itemList;
+    }
+    public List<Cart> getCartList(){
+        return cartList;
+    }
+
+    public void payCartList(){
+        Cart cart;
         for (int i = 0; i< cartList.size(); i++){
-            item = cartList.get(i);
-            databaseClient.getDatabase().listCartItemDao().deleteItem(item);
+            cart = cartList.get(i);
+            ((CartActivity) context)
+                    .updateCart(
+                            cart.getId(),cart.getId_user(),
+                            cart.getId_item(), cart.getAmount(),
+                            cart.getSubtotal(), true);
+        }
+        cartList.clear();
+        notifyDataSetChanged();
+    }
+    public void resetCartList(){
+        Cart cart;
+        for (int i = 0; i< cartList.size(); i++){
+            cart = cartList.get(i);
+            if (context instanceof CartActivity)
+                ((CartActivity) context).deleteCart(cart.getId());
         }
         cartList.clear();
         notifyDataSetChanged();

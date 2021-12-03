@@ -10,9 +10,6 @@
         <variable
             name="carts"
             type="com.example.shopify.model.Cart" />
-        <variable
-            name="imgURL"
-            type="String" />
     </data>
 
     <androidx.cardview.widget.CardView

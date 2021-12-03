@@ -79,7 +79,7 @@
             android:src="@drawable/ic_baseline_delete_forever_24"
             android:layout_margin="12dp"
             android:layout_gravity="end|center"
-            app:tint="#FFFFFF" />
+            />
 
     </com.google.android.material.card.MaterialCardView>
 </layout>

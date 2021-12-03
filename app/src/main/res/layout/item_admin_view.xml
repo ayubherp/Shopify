@@ -27,7 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="175dp"
                 android:scaleType="centerCrop"
-                android:src="@{dataItem.image}" />
+                android:src="@{dataItem.image}"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,13 +78,12 @@
                 </LinearLayout>
 
                 <ImageButton
-                    android:id="@+id/btn_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/btnDelete"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:src="@drawable/ic_baseline_delete_forever_24"
-                    app:tint="#DC3939" />
+                    android:layout_gravity="end"
+                    />
 
             </LinearLayout>
 

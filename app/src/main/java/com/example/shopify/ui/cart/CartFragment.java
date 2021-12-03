@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -202,8 +203,11 @@ public class CartFragment extends Fragment {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Log.d("test","test0");
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Accepts", "application/json");
+                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
+                headers.put("Accept", "application/json");
+                Log.d("test","test01");
                 return headers;
             }
         };

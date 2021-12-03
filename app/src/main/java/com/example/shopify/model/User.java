@@ -12,6 +12,8 @@ public class User {
     private String email_verified_at;
     private String created_at;
     private String updated_at;
+    private String token_type;
+    private String access_token;
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -30,7 +32,8 @@ public class User {
         this.name = name;
         this.email = email;
     }
-    public User(Long id, String name, String email, String email_verified_at, String created_at, String updated_at)
+    public User(Long id, String name, String email, String email_verified_at,
+                String created_at, String updated_at, String token_type, String access_token)
     {
         this.id = id;
         this.name = name;
@@ -38,6 +41,8 @@ public class User {
         this.email_verified_at = email_verified_at;
         this.created_at = created_at;
         this.updated_at = updated_at;
+        this.token_type = token_type;
+        this.access_token = access_token;
     }
     public User(){
         //nothing
@@ -97,5 +102,21 @@ public class User {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getToken_type() {
+        return token_type;
+    }
+
+    public void setToken_type(String token_type) {
+        this.token_type = token_type;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 }

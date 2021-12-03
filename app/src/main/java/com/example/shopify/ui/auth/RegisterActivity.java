@@ -1,24 +1,19 @@
 package com.example.shopify.ui.auth;
 
-import static com.android.volley.Request.Method.POST;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,18 +21,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.shopify.R;
 import com.example.shopify.api.UserApi;
-import com.example.shopify.databinding.ActivityLoginBinding;
 import com.example.shopify.databinding.ActivityRegisterBinding;
-import com.example.shopify.model.User;
-import com.example.shopify.model.UserResponse;
-import com.example.shopify.preferences.UserPreferences;
-import com.google.android.material.button.MaterialButton;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,11 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
     private void register(){
         setLoading(true);
         if (validateForm()) {
-            StringRequest stringRequest = new StringRequest(POST, UserApi.REGISTER_URL,
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, UserApi.REGISTER_URL,
                     new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     try {
+                        setLoading(false);
                         JSONObject jsonObject = new JSONObject(response);
                         String success = jsonObject.getString("success");
                         Log.d("test","test1");
@@ -105,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                             dialog.show();
                         }
                     } catch (JSONException e) {
+                        Log.d("test","test3");
                         e.printStackTrace();
                         Toast.makeText(RegisterActivity.this, "Register error!" +e.toString(),
                                 Toast.LENGTH_SHORT).show();
@@ -117,22 +107,32 @@ public class RegisterActivity extends AppCompatActivity {
                     try {
                         Toast.makeText(RegisterActivity.this, "Register Error!" +error.toString(),
                                 Toast.LENGTH_SHORT).show();
+                        Log.d("test","test4");
                         setLoading(false);
                     } catch (Exception e) {
                         Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("test","test5");
                     }
                 }
             }) {
                 @Override
-                public Map<String, String> getParams() throws AuthFailureError {
+                public Map<String, String> getParams() {
                     Map<String, String> params= new HashMap<String, String>();
-                    params.put("Content-Type","application/x-www-form-urlencoded");
-                    params.put("Accept", "application/json");
+                    Log.d("test","test01");
                     params.put("email",binding.etEmail.getText().toString());
                     params.put("name",binding.etName.getText().toString());
                     params.put("password",binding.etPassword.getText().toString());
                     return params;
                 }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Log.d("test","test02");
+                    Map<String,String> params = new HashMap<String, String>();
+                    params.put("Content-Type","application/x-www-form-urlencoded");
+                    return params;
+                }
+
             };
             queue.add(stringRequest);
         }

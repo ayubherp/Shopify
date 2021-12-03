@@ -26,7 +26,7 @@ public class AdminHomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding =  DataBindingUtil.inflate(
-                inflater, R.layout.fragment_home, container, false);
+                inflater, R.layout.fragment_admin_home, container, false);
         userPreferences = new UserPreferences(getContext());
         user = userPreferences.getUserLogin();
 

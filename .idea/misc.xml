@@ -12,7 +12,7 @@
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_cart.xml" value="0.12760416666666666" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_edit_user.xml" value="0.25" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_geolocation.xml" value="0.2" />
-        <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_login.xml" value="0.12132725430597771" />
+        <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_main.xml" value="0.152" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_register.xml" value="0.176" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/activity_splash_screen.xml" value="0.1" />
@@ -21,7 +21,7 @@
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/cart_item_view.xml" value="0.264" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/cart_view.xml" value="0.25" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_admin_home.xml" value="0.25" />
-        <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_admin_item.xml" value="0.1" />
+        <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_admin_item.xml" value="0.152" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_admin_user.xml" value="0.24635416666666668" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_announce.xml" value="0.25" />
         <entry key="..\:/Android Studio Test/Shopify/app/src/main/res/layout/fragment_cart.xml" value="0.152" />

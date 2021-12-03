@@ -4,6 +4,7 @@ import static com.android.volley.Request.Method.GET;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import com.example.shopify.adapter.UserAdapter;
 import com.example.shopify.api.UserApi;
 import com.example.shopify.databinding.FragmentAdminUserBinding;
 import com.example.shopify.model.UserResponse;
+import com.example.shopify.preferences.UserPreferences;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -44,6 +46,7 @@ public class AdminUserFragment extends Fragment {
     private FragmentAdminUserBinding binding;
     private RequestQueue queue;
     private UserAdapter adapter;
+    private UserPreferences userPreferences;
     public AdminUserFragment(){
     }
     @Override
@@ -51,7 +54,7 @@ public class AdminUserFragment extends Fragment {
     {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_admin_user,container, false);
         queue = Volley.newRequestQueue(this.getContext());
-
+        userPreferences = new UserPreferences(getContext());
         binding.srUser.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -100,9 +103,11 @@ public class AdminUserFragment extends Fragment {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
+                Log.d("test","test0");
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
                 headers.put("Accept", "application/json");
-
+                Log.d("test","test01");
                 return headers;
             }
         };

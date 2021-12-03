@@ -15,6 +15,7 @@ public class UserPreferences {
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_TOKEN = "access_token";
 
     public UserPreferences(Context context) {
         this.context = context;
@@ -23,13 +24,14 @@ public class UserPreferences {
         editor = sharedPreferences.edit();
     }
 
-    public void setUser(Long id,String name, String email){
+    public void setUser(Long id,String name, String email, String access_token){
 
         /* Menyimpan data login ke sharedPreferences dengan key dan value  */
         editor.putBoolean(IS_LOGIN, true);
         editor.putLong(KEY_ID,id);
         editor.putString(KEY_NAME,name);
         editor.putString(KEY_EMAIL,email);
+        editor.putString(KEY_TOKEN,access_token);
 
         /* Jangan lupa commit karena kalo hanya set editonya saja tidak commit akan sia-sia */
         editor.commit();
@@ -37,14 +39,16 @@ public class UserPreferences {
 
     public User getUserLogin(){
         /* Mengembalikan object User untuk menampilkan data user jika user sudah login */
-        String name,email,password;
+        String name,email,access_token;
         long id;
 
         id = sharedPreferences.getLong(KEY_ID,0);
         name = sharedPreferences.getString(KEY_NAME,null);
         email = sharedPreferences.getString(KEY_EMAIL,null);
+        access_token = sharedPreferences.getString(KEY_TOKEN, null);
 
-        return new User(id,name,email);
+        return new User(id,name,email,
+                "","","","",access_token);
     }
 
     public boolean checkLogin(){

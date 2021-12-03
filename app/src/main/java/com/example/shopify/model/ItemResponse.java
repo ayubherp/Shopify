@@ -7,7 +7,7 @@ import java.util.List;
 public class ItemResponse {
     private String message;
 
-    @SerializedName("item")
+    @SerializedName("data")
     private List<Item> itemList;
 
     public String getMessage() {

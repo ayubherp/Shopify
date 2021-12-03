@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         });
         changeFragment(new HomeFragment());
     }
-    private void changeFragment(Fragment fragment) {
+    public void changeFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.layout_fragment_main,fragment)

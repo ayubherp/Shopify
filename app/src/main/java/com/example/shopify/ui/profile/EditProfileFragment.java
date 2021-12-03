@@ -84,7 +84,7 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 user.setName(String.valueOf(binding.etNama.getText()));
                 user.setEmail(String.valueOf(binding.etEmail.getText()));
-                userPreferences.setUser(user.getId(),user.getName(), user.getEmail());
+                userPreferences.setUser(user.getId(),user.getName(), user.getEmail(), user.getAccess_token());
                 updateProfile(user.getId());
             }
         });

@@ -2,9 +2,11 @@ package com.example.shopify.ui.item;
 
 import static com.android.volley.Request.Method.GET;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,26 +27,32 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.shopify.AdminActivity;
 import com.example.shopify.R;
 import com.example.shopify.adapter.ItemAdapter;
 import com.example.shopify.adapter.ItemAdminAdapter;
 import com.example.shopify.api.ItemApi;
 import com.example.shopify.databinding.FragmentAdminItemBinding;
 import com.example.shopify.databinding.FragmentItemBinding;
+import com.example.shopify.model.Item;
 import com.example.shopify.model.ItemResponse;
+import com.example.shopify.preferences.UserPreferences;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdminItemFragment extends Fragment {
     private RequestQueue queue;
     private ItemAdminAdapter adapter;
     private FragmentAdminItemBinding binding;
+    private UserPreferences userPreferences;
 
     public AdminItemFragment(){
     }
@@ -52,14 +60,9 @@ public class AdminItemFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_item, container, false);
+                inflater, R.layout.fragment_admin_item, container, false);
         queue = Volley.newRequestQueue(this.getContext());
-        binding.srItem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getAllItem();
-            }
-        });
+        userPreferences = new UserPreferences(getContext());
         binding.svItem.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -72,6 +75,13 @@ public class AdminItemFragment extends Fragment {
                 return false;
             }
         });
+        binding.btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AddEditActivity.class);
+                startActivity(intent);
+            }
+        });
         adapter = new ItemAdminAdapter(new ArrayList<>(), this.getContext());
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -80,6 +90,12 @@ public class AdminItemFragment extends Fragment {
             binding.rvItem.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         }
         binding.rvItem.setAdapter(adapter);
+        binding.srItem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllItem();
+            }
+        });
         getAllItem();
         return binding.getRoot();
     }
@@ -91,11 +107,13 @@ public class AdminItemFragment extends Fragment {
                 ItemApi.GET_ALL_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.d("test","test1");
                 Gson gson = new Gson();
                 ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
+                Log.d("test","test11");
                 adapter.setProdukList(itemResponse.getItemList());
                 adapter.getFilter().filter(binding.svItem.getQuery());
-
+                Log.d("test","test12");
                 Toast.makeText(getContext(),
                         itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 binding.srItem.setRefreshing(false);
@@ -105,20 +123,26 @@ public class AdminItemFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 binding.srItem.setRefreshing(false);
                 try{
+                    Log.d("test","test21");
                     String responseBody = new String(error.networkResponse.data,
                             StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
+                    Log.d("test","test22");
                     Toast.makeText(getContext(),
                             errors.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
+                    Log.d("test","test3");
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Log.d("test","test0");
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Accepts", "application/json");
+                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
+                headers.put("Accept", "application/json");
+                Log.d("test","test01");
                 return headers;
             }
         };

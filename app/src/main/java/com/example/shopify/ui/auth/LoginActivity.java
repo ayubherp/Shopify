@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -94,23 +96,21 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void attemptLogin(){
+        setLoading(true);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UserApi.LOGIN_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d("test","test1");
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
                     if(success.equals("1"))
                     {
-                        Log.d("test","test2");
                         Gson gson = new Gson();
                         AuthResponse authResponse = gson.fromJson(response, AuthResponse.class);
                         User user = authResponse.getUser();
                         if(user.getEmail_verified_at()!=null)
                         {
-                            userPreferences.setUser(user.getId(), user.getName(), user.getEmail());
-                            Log.d("test","test3");
+                            userPreferences.setUser(user.getId(), user.getName(), user.getEmail(), user.getAccess_token());
                             checkLogin();
                         }
                         else
@@ -119,9 +119,9 @@ public class LoginActivity extends AppCompatActivity {
                                     "Must verify email first. Check your email box.", Toast.LENGTH_SHORT).show();
 
                         }
+                        setLoading(false);
                     }
                 } catch (JSONException e) {
-                    Log.d("test","test4");
                     e.printStackTrace();
                 }
 
@@ -131,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
-                    Log.d("test","test5");
                     String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
                     Toast.makeText(LoginActivity.this, errors.getString("message"), Toast.LENGTH_SHORT).show();
@@ -141,8 +140,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> params= new HashMap<String, String>();
+            public Map<String, String> getParams() throws AuthFailureError{
+                Map<String, String> params= new HashMap<String, String>();
                 params.put(KEY_EMAIL, binding.etEmail.getText().toString());
                 params.put(KEY_PASSWORD, binding.etPassword.getText().toString());
                 return params;
@@ -169,6 +168,18 @@ public class LoginActivity extends AppCompatActivity {
         {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
+        }
+    }
+
+    private void setLoading(boolean isLoading) {
+        LinearLayout layoutLoading = findViewById(R.id.loading_layout);
+        if (isLoading) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            layoutLoading.setVisibility(View.VISIBLE);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            layoutLoading.setVisibility(View.INVISIBLE);
         }
     }
 

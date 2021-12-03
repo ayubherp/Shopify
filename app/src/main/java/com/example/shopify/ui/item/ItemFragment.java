@@ -5,6 +5,7 @@ import static com.android.volley.Request.Method.POST;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class ItemFragment extends Fragment {
     private RequestQueue queue;
     private ItemAdapter adapter;
     private FragmentItemBinding binding;
+    private UserPreferences userPreferences;
     public ItemFragment(){
     }
     @Override
@@ -60,12 +62,7 @@ public class ItemFragment extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_item, container, false);
         queue = Volley.newRequestQueue(this.getContext());
-        binding.srItem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getAllItem();
-            }
-        });
+        userPreferences = new UserPreferences(getContext());
         binding.svItem.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -87,6 +84,12 @@ public class ItemFragment extends Fragment {
         }
         binding.rvItem.setAdapter(adapter);
         getAllItem();
+        binding.srItem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllItem();
+            }
+        });
         return binding.getRoot();
     }
 
@@ -123,8 +126,11 @@ public class ItemFragment extends Fragment {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Log.d("test","test0");
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Accepts", "application/json");
+                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
+                headers.put("Accept", "application/json");
+                Log.d("test","test01");
                 return headers;
             }
         };

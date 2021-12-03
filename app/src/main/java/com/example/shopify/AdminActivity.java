@@ -10,6 +10,7 @@ import com.example.shopify.model.ItemResponse;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
 import com.example.shopify.ui.home.AdminHomeFragment;
+import com.example.shopify.ui.home.HomeFragment;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
@@ -87,13 +88,7 @@ public class AdminActivity extends AppCompatActivity {
                 return false;
             }
         });
-        binding.btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AdminActivity.this, AddEditActivity.class);
-                startActivity(intent);
-            }
-        });
+        changeFragment(new AdminHomeFragment());
     }
 
     @Override

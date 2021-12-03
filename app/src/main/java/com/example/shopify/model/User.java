@@ -10,6 +10,8 @@ public class User {
     private String email;
     private String password;
     private String email_verified_at;
+    private String created_at;
+    private String updated_at;
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -27,6 +29,15 @@ public class User {
         this.id = id;
         this.name = name;
         this.email = email;
+    }
+    public User(Long id, String name, String email, String email_verified_at, String created_at, String updated_at)
+    {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.email_verified_at = email_verified_at;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
     public User(){
         //nothing
@@ -70,5 +81,21 @@ public class User {
 
     public void setEmail_verified_at(String email_verified_at) {
         this.email_verified_at = email_verified_at;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 }

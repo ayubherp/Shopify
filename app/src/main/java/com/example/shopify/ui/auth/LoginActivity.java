@@ -28,6 +28,7 @@ import com.example.shopify.api.UserApi;
 
 import com.example.shopify.databinding.ActivityLoginBinding;
 import com.example.shopify.databinding.ActivityMainBinding;
+import com.example.shopify.model.AuthResponse;
 import com.example.shopify.model.CartResponse;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
@@ -98,18 +99,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     Log.d("test","test1");
-                   JSONObject jsonObject = new JSONObject(response);
+                    JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
-                    if(!jsonObject.getString("verif").equals("null"))
+                    if(success.equals("1"))
                     {
                         Log.d("test","test2");
                         Gson gson = new Gson();
-                        UserResponse userResponse = gson.fromJson(response, UserResponse.class);
-                        User user = userResponse.getUserList().get(0);
-                        if(userResponse.getUserList().get(0).getEmail_verified_at()!=null)
+                        AuthResponse authResponse = gson.fromJson(response, AuthResponse.class);
+                        User user = authResponse.getUser();
+                        if(user.getEmail_verified_at()!=null)
                         {
                             userPreferences.setUser(user.getId(), user.getName(), user.getEmail());
                             Log.d("test","test3");
+                            checkLogin();
                         }
                         else
                         {

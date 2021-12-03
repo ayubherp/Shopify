@@ -11,7 +11,7 @@
         android:layout_margin="16dp"
         android:gravity="center"
         android:orientation="vertical"
-        tools:context=".ui.home.HomeFragment">
+        tools:context=".ui.home.AdminHomeFragment">
 
         <ImageView
             android:id="@+id/ivHome"

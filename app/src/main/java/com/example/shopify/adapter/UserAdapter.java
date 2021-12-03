@@ -7,24 +7,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shopify.AdminActivity;
 import com.example.shopify.databinding.UserViewBinding;
+import com.example.shopify.model.Item;
 import com.example.shopify.model.User;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser>
+        implements Filterable {
 
-    private List<User> userList;
+    private List<User> userList, filteredUserList;
     private Context context;
 
     public UserAdapter(List<User> userList, Context context) {
         this.userList = userList;
+        filteredUserList = new ArrayList<>(userList);
         this.context = context;
     }
 
@@ -65,12 +71,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
                 MaterialAlertDialogBuilder materialAlertDialogBuilder =
                         new MaterialAlertDialogBuilder(context);
                 materialAlertDialogBuilder.setTitle("Konfirmasi")
-                        .setMessage("Apakah anda yakin ingin menghapus data user ini?")
-                        .setNegativeButton("Batal", null)
-                        .setPositiveButton("Hapus", new DialogInterface.OnClickListener() {
+                        .setMessage("Are you sure you want to delete this user's data?")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                if (context instanceof AdminActivity)
                                     ((AdminActivity) context).deleteUser(user.getId());
                             }
                         })
@@ -82,5 +87,42 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
     @Override
     public int getItemCount() {
         return userList.size();
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
+        filteredUserList = new ArrayList<>(userList);
+    }
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charSequenceString = charSequence.toString();
+                List<User> filtered = new ArrayList<>();
+
+                if (charSequenceString.isEmpty()) {
+                    filtered.addAll(userList);
+                } else {
+                    for (User user : userList) {
+                        if (user.getName().toLowerCase()
+                                .contains(charSequenceString.toLowerCase()))
+                            filtered.add(user);
+                    }
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filtered;
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredUserList.clear();
+                filteredUserList.addAll((List<User>) filterResults.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 }

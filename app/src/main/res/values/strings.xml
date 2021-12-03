@@ -6,10 +6,10 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="clear_field">Clear Field</string>
-    <string name="name">Nama Lengkap</string>
+    <string name="name">Name</string>
     <string name="password">Password</string>
-    <string name="welcome">Selamat Datang, Nama Lengkap</string>
-    <string name="welcome2">Selamat berbelanja!</string>
+    <string name="welcome">Welcome, Nama Lengkap</string>
+    <string name="welcome2">Happy Shopping!</string>
     <string name="alamat">Alamat</string>
     <string name="loading_text">loading…be patience</string>
     <string name="mapbox_access_token">pk.eyJ1IjoibWFnbmV0aWM0MzIxIiwiYSI6ImNrdWt5OHdkNjBkbmUydW80MG1sbmhkaWwifQ.66WeJH9stKlAP9Ndt7kPbw</string>
@@ -21,4 +21,21 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="username">Username</string>
     <string name="format_money">%.0f</string>
+    <string name="nama">Nama</string>
+    <string name="batal">Batal</string>
+    <string name="simpan">Simpan</string>
+    <string name="tambah_produk">Tambah Produk</string>
+    <string name="edit_produk">Edit Produk</string>
+    <string name="harga">Harga</string>
+    <string name="stok">Stok</string>
+    <string name="deksripsi">Deksripsi</string>
+    <string name="buka_kamera">Buka kamera</string>
+    <string name="pilih_dari_galeri">Pilih dari galeri</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="type">Type</string>
+    <string name="price">Price</string>
+    <string name="email">Email</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="your_profile">Your Profile</string>
 </resources>

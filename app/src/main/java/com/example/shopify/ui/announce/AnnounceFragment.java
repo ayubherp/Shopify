@@ -122,4 +122,9 @@ public class AnnounceFragment extends Fragment {
         });
         return binding.getRoot();
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

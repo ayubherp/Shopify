@@ -38,14 +38,13 @@ public class UserPreferences {
     public User getUserLogin(){
         /* Mengembalikan object User untuk menampilkan data user jika user sudah login */
         String name,email,password;
-        int id;
+        long id;
 
-        id = sharedPreferences.getInt(KEY_ID,0);
+        id = sharedPreferences.getLong(KEY_ID,0);
         name = sharedPreferences.getString(KEY_NAME,null);
         email = sharedPreferences.getString(KEY_EMAIL,null);
-        password = sharedPreferences.getString(KEY_PASSWORD,null);
 
-        return new User(name,email,password);
+        return new User(id,name,email);
     }
 
     public boolean checkLogin(){

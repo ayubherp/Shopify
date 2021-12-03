@@ -2,27 +2,24 @@ package com.example.shopify.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.shopify.R;
-import com.example.shopify.databinding.FragmentHomeBinding;
+import com.example.shopify.databinding.FragmentAdminHomeBinding;
 import com.example.shopify.model.User;
 import com.example.shopify.preferences.UserPreferences;
 import com.example.shopify.ui.auth.LoginActivity;
-import com.google.android.material.button.MaterialButton;
 
-public class HomeFragment extends Fragment {
+public class AdminHomeFragment extends Fragment {
     private User user;
     private UserPreferences userPreferences;
-    private FragmentHomeBinding binding;
+    private FragmentAdminHomeBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +33,7 @@ public class HomeFragment extends Fragment {
         checkLogin();
 
         binding.tvWelcome.setText("Welcome to Shopify, "+user.getName());
-        binding.tvWelcome2.setText("Happy Shopping!");
+        binding.tvWelcome2.setText("Let's control our data!");
         binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

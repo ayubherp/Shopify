@@ -49,8 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ItemFragment extends Fragment {
-    private User user;
-    private UserPreferences userPreferences;
     private RequestQueue queue;
     private ItemAdapter adapter;
     private FragmentItemBinding binding;
@@ -61,10 +59,7 @@ public class ItemFragment extends Fragment {
     {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_item, container, false);
-        //ArrayList<Item> listItem = new StaticItemList().item;
         queue = Volley.newRequestQueue(this.getContext());
-        userPreferences = new UserPreferences(getContext().getApplicationContext());
-        user = userPreferences.getUserLogin();
         binding.srItem.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -91,6 +86,7 @@ public class ItemFragment extends Fragment {
             binding.rvItem.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         }
         binding.rvItem.setAdapter(adapter);
+        getAllItem();
         return binding.getRoot();
     }
 
@@ -135,5 +131,10 @@ public class ItemFragment extends Fragment {
         queue.add(stringRequest);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
 }

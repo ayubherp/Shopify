@@ -99,7 +99,6 @@ public class CartFragment extends Fragment {
         queue = Volley.newRequestQueue(this.getContext());
         userPreferences = new UserPreferences(getContext().getApplicationContext());
         user = userPreferences.getUserLogin();
-        binding.rvCart.setLayoutManager(new LinearLayoutManager(getContext()));
         notificationManager = NotificationManagerCompat.from(getContext());
         binding.srCart.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -142,6 +141,7 @@ public class CartFragment extends Fragment {
                 Toast.makeText(v.getRootView().getContext(), "Reset Cart success", Toast.LENGTH_SHORT).show();
             }
         });
+        binding.rvCart.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.rvCart.setAdapter(adapter);
         getAllCart();
         return binding.getRoot();
@@ -268,7 +268,7 @@ public class CartFragment extends Fragment {
         cellSupplier.setPaddingBottom(10);
         cellSupplier.setBorder(Rectangle.NO_BORDER);
         Paragraph kepada = new Paragraph(
-                "Kepada Yth: \n" + "Ayub Her Pracoyo" + "\n",
+                "Kepada Yth: \n" + user.getName() + "\n",
                 new com.itextpdf.text.Font(Font.FontFamily.HELVETICA, 10,
                         Font.NORMAL, BaseColor.BLACK));
         cellSupplier.addElement(kepada);

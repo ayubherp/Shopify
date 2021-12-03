@@ -18,9 +18,6 @@
             android:name=".ui.item.AddEditActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.user.EditUserActivity"
-            android:exported="false" />
-        <activity
             android:name=".AdminActivity"
             android:exported="false" />
         <activity

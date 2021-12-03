@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.shopify.R;
 import com.example.shopify.databinding.FragmentProfileBinding;
@@ -36,6 +37,13 @@ public class ProfileFragment extends Fragment {
         checkLogin();
 
         binding.setUser(user);
+        binding.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_profile, new EditProfileFragment()).commit();
+            }
+        });
         binding.btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

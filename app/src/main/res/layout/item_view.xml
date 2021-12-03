@@ -35,7 +35,7 @@
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
                 android:padding="16dp"
-                app:imgURL="@{dataItem.linkPic}"/>
+                app:imgURL="@{dataItem.image}"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

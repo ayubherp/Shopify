@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.shopify.R;
 import com.example.shopify.api.ItemApi;
@@ -69,6 +70,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
         {
             binding.setCarts(cart);
             binding.setItems(item);
+            Glide.with(context)
+                    .load(item.getImage())
+                    .placeholder(R.drawable.no_image)
+                    .into(binding.imgCart);
         }
     }
 
@@ -92,6 +97,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                 if (cart.getAmount()==1)
                 {
                     ((CartActivity) context).deleteCart(cart.getId());
+                    notifyDataSetChanged();
                 }
                 else if(cart.getAmount()>1)
                 {
@@ -102,6 +108,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                     ((CartActivity) context).updateCart(
                             cart.getId(),cart.getId_user(),cart.getId_item(),
                             cart.getAmount(),cart.getSubtotal(),false);
+                    notifyDataSetChanged();
                 }
             }
         });

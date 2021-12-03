@@ -2,6 +2,7 @@ package com.example.shopify.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,35 +20,35 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.example.shopify.MainActivity;
+import com.example.shopify.AdminActivity;
 import com.example.shopify.R;
-import com.example.shopify.databinding.AddToCartDialogBinding;
+import com.example.shopify.databinding.ItemAdminViewBinding;
 import com.example.shopify.databinding.ItemViewBinding;
 import com.example.shopify.model.Item;
+import com.example.shopify.ui.item.AddEditActivity;
 import com.example.shopify.ui.item.ItemFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem>
+public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.viewHolderItem>
         implements Filterable {
     private List<Item> itemList, filteredItemList;
     private Context context;
     private Item item;
 
-    public ItemAdapter(List<Item> data, Context context){
+    public ItemAdminAdapter(List<Item> data, Context context){
         itemList = data;
         this.context = context;
     }
 
     public class viewHolderItem extends RecyclerView.ViewHolder {
-        ItemViewBinding binding;
-        public viewHolderItem(@NonNull ItemViewBinding binding){
+        ItemAdminViewBinding binding;
+        public viewHolderItem(@NonNull ItemAdminViewBinding binding){
             super(binding.getRoot());
             this.binding = binding;
-
-            this.binding.layoutCard.setOnClickListener(new View.OnClickListener() {
+            this.binding.cvItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d("TEST", "onClick: " +getAdapterPosition());
@@ -60,7 +61,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
             Glide.with(context)
                     .load(item.getImage())
                     .placeholder(R.drawable.no_image)
-                    .into(binding.imgView);
+                    .into(binding.ivImage);
+
         }
     }
 
@@ -68,39 +70,41 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
     @Override
     public viewHolderItem onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ItemViewBinding bindingItem = ItemViewBinding.inflate(layoutInflater, parent, false);
+        ItemAdminViewBinding bindingItem = ItemAdminViewBinding.inflate(layoutInflater, parent, false);
         return new viewHolderItem(bindingItem);
     }
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
         holder.bindView(itemList.get(position));
-        holder.binding.layoutCard.setOnClickListener(new View.OnClickListener() {
+        holder.binding.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TEST", "onClick: " + holder.getAdapterPosition());
                 item = itemList.get(holder.getAdapterPosition());
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getRootView().getContext());
-                AddToCartDialogBinding addDialogBinding =
-                        DataBindingUtil.inflate(
-                                LayoutInflater.from(v.getRootView().getContext()), R.layout.add_to_cart_dialog, null, false
-                        );
-                addDialogBinding.setDataItem(item);
-                alertDialog.setView(addDialogBinding.getRoot());
-                addDialogBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (context instanceof MainActivity)
-                            ((MainActivity) context).addItemToCart(item);
-                    }
-                });
-                alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                alertDialog.show();
+                Intent i = new Intent(context, AddEditActivity.class);
+                i.putExtra("id", item.getId());
+
+                if (context instanceof AdminActivity)
+                    ((AdminActivity) context).startActivityForResult(i,
+                            AdminActivity.LAUNCH_ADD_ACTIVITY);
+            }
+        });
+        holder.binding.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialAlertDialogBuilder materialAlertDialogBuilder =
+                        new MaterialAlertDialogBuilder(context);
+                materialAlertDialogBuilder.setTitle("Konfirmasi")
+                        .setMessage("Are you sure you want to delete this item data? ")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ((AdminActivity) context).deleteItem(item.getId());
+                            }
+                        })
+                        .show();
             }
         });
     }

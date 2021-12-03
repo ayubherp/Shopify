@@ -29,7 +29,7 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                app:imgURL="@{items.image}"
+                android:src="@{items.image}"
                 android:id="@+id/imgCart"
                 />
             <LinearLayout

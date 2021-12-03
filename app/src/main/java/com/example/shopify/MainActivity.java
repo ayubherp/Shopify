@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             layoutLoading.setVisibility(View.VISIBLE);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            layoutLoading.setVisibility(View.VISIBLE);
+            layoutLoading.setVisibility(View.INVISIBLE);
         }
     }
 }

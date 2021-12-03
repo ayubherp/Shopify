@@ -6,7 +6,7 @@
 
     <data>
         <variable
-            name="dataItem"
+            name="itemData"
             type="com.example.shopify.model.Item"/>
     </data>
 
@@ -22,7 +22,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="40dp"
-            app:imgURL="@{dataItem.image}"
+            android:src="@{itemData.image}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
             android:id="@+id/merkDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{dataItem.name}"
+            android:text="@{itemData.name}"
             android:hint="Brand"
             app:layout_constraintTop_toBottomOf="@+id/brand"
             android:textSize="18sp"
@@ -59,7 +59,7 @@
             android:id="@+id/typeDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{dataItem.type}"
+            android:text="@{itemData.type}"
             android:hint="Type"
             app:layout_constraintTop_toBottomOf="@+id/type"
             android:textSize="18sp"
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Type"
-            android:text="@{String.valueOf(dataItem.price)}"
+            android:text="@{String.valueOf(itemData.price)}"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold"

@@ -5,7 +5,7 @@
     >
     <data>
         <variable
-            name="dataItem"
+            name="item"
             type="com.example.shopify.model.Item"/>
     </data>
 
@@ -32,14 +32,14 @@
                 android:layout_height="120dp"
                 android:layout_centerHorizontal="true"
                 android:padding="16dp"
-                app:imgURL="@{dataItem.image}"/>
+                android:src="@{item.image}"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtMerk"
                 android:layout_below="@id/imgView"
                 android:textSize="14sp"
-                android:text="@{dataItem.name}"
+                android:text="@{item.name}"
                 android:textStyle="bold"
                 android:layout_marginLeft="15dp"
                 android:hint="Merk"
@@ -58,7 +58,7 @@
                 android:id="@+id/txtType"
                 android:layout_below="@id/imgView"
                 android:layout_toRightOf="@id/space"
-                android:text="@{dataItem.type}"
+                android:text="@{item.type}"
                 android:hint="Type"
                 android:textSize="14sp"
                 android:textColor="@color/white"/>
@@ -79,7 +79,7 @@
                 android:layout_below="@id/txtMerk"
                 android:layout_toRightOf="@id/txtHarga"
                 android:textSize="12sp"
-                android:text="@{String.valueOf(dataItem.price)}"
+                android:text="@{String.valueOf(item.price)}"
                 android:hint="Price : XXXXXXXX"
                 android:textColor="@color/white"/>
         </RelativeLayout>

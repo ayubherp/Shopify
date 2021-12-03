@@ -56,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
         }
         public void bindView(Item item)
         {
-            binding.setDataItem(item);
+            binding.setItem(item);
             Glide.with(context)
                     .load(item.getImage())
                     .placeholder(R.drawable.no_image)
@@ -85,7 +85,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
                         DataBindingUtil.inflate(
                                 LayoutInflater.from(v.getRootView().getContext()), R.layout.add_to_cart_dialog, null, false
                         );
-                addDialogBinding.setDataItem(item);
+                addDialogBinding.setItemData(item);
                 alertDialog.setView(addDialogBinding.getRoot());
                 addDialogBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
                     @Override

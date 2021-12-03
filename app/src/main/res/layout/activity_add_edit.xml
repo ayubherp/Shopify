@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
         <variable
-            name="dataItem"
+            name="data"
             type="com.example.shopify.model.Item"/>
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="true"
@@ -52,9 +55,8 @@
                         android:id="@+id/iv_gambar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:foreground="?android:attr/selectableItemBackground"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/no_image" />
+                        android:src="@{data.image}" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -65,14 +67,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="@{dataItem.name}"
                     android:hint="@string/name">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapWords" />
+                        android:inputType="textCapWords"
+                        android:text="@{data.name}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -83,14 +85,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="@{dataItem.type}"
                     android:hint="@string/type">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapWords" />
+                        android:inputType="textCapWords"
+                        android:text="@{data.type}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,7 +110,7 @@
                         android:id="@+id/et_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{String.valueOf(dataItem.price)}"
+                        android:text="@{String.valueOf(data.price)}"
                         android:inputType="number" />
 
                 </com.google.android.material.textfield.TextInputLayout>

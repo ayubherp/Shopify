@@ -7,14 +7,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -23,24 +26,28 @@ import com.example.shopify.MainActivity;
 import com.example.shopify.R;
 import com.example.shopify.api.UserApi;
 
+import com.example.shopify.databinding.ActivityLoginBinding;
+import com.example.shopify.databinding.ActivityMainBinding;
+import com.example.shopify.model.CartResponse;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
 import com.example.shopify.preferences.UserPreferences;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
 
-    private EditText etUsername, etPassword;
-    private MaterialButton btnClear, btnLogin, btnRegister;
+    private ActivityLoginBinding binding;
     private UserPreferences userPreferences;
     private RequestQueue queue;
 
@@ -48,21 +55,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         userPreferences = new UserPreferences(LoginActivity.this);
         queue = Volley.newRequestQueue(this);
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-
-        btnClear = findViewById(R.id.btnClear);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnRegister = findViewById(R.id.btnRegister);
 
         /* Apps will check the login first from shared preferences */
         checkLogin();
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        binding.btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
@@ -71,19 +72,19 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /* to clear the field just set text to "" */
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        binding.btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                etUsername.setText("");
-                etPassword.setText("");
+                binding.etEmail.setText("");
+                binding.etPassword.setText("");
             }
         });
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(validateForm()){
-                    attemptLogin(etUsername.getText().toString().trim(), etPassword.getText().toString().trim());
+                    attemptLogin();
                 }
             }
         });
@@ -91,35 +92,44 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void attemptLogin(String email, String password){
-        StringRequest stringRequest = new StringRequest(POST, UserApi.LOGIN_URL, new Response.Listener<String>() {
+    private void attemptLogin(){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UserApi.LOGIN_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Gson gson = new Gson();
-                UserResponse userResponse = gson.fromJson(response, UserResponse.class);
-                Toast.makeText(LoginActivity.this, userResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                if(userResponse.getMessage().equals("Authenticated"))
-                {
-                    User user = userResponse.getUserList().get(0);
-                    if(userResponse.getUserList().get(0).getEmail_verified_at()!=null)
+                try {
+                    Log.d("test","test1");
+                   JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+                    if(!jsonObject.getString("verif").equals("null"))
                     {
-                        userPreferences.setUser(user.getId(), user.getName(), user.getEmail());
-                    }
-                    else
-                    {
-                        Toast.makeText(LoginActivity.this,
-                                "Must verify email first. Check your email box.", Toast.LENGTH_SHORT).show();
+                        Log.d("test","test2");
+                        Gson gson = new Gson();
+                        UserResponse userResponse = gson.fromJson(response, UserResponse.class);
+                        User user = userResponse.getUserList().get(0);
+                        if(userResponse.getUserList().get(0).getEmail_verified_at()!=null)
+                        {
+                            userPreferences.setUser(user.getId(), user.getName(), user.getEmail());
+                            Log.d("test","test3");
+                        }
+                        else
+                        {
+                            Toast.makeText(LoginActivity.this,
+                                    "Must verify email first. Check your email box.", Toast.LENGTH_SHORT).show();
 
+                        }
                     }
+                } catch (JSONException e) {
+                    Log.d("test","test4");
+                    e.printStackTrace();
                 }
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_OK, returnIntent);
-                finish();
+
+                checkLogin();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 try {
+                    Log.d("test","test5");
                     String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
                     Toast.makeText(LoginActivity.this, errors.getString("message"), Toast.LENGTH_SHORT).show();
@@ -129,10 +139,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params= new HashMap<String, String>();
-                params.put("email",email);
-                params.put("password",password);
+                params.put(KEY_EMAIL, binding.etEmail.getText().toString());
+                params.put(KEY_PASSWORD, binding.etPassword.getText().toString());
                 return params;
             }
         };
@@ -141,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateForm(){
         /* Check username & password is empty or not */
-        if(etUsername.getText().toString().trim().isEmpty() || etPassword.getText().toString().trim().isEmpty()){
+        if(binding.etEmail.getText().toString().trim().isEmpty() || binding.etPassword.getText().toString().trim().isEmpty()){
             Toast.makeText(LoginActivity.this,"Username or Password still empty",Toast.LENGTH_SHORT).show();
             return false;
         }

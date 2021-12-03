@@ -230,7 +230,7 @@ public class AddEditActivity extends AppCompatActivity {
                 ItemResponse itemResponse =
                         gson.fromJson(response, ItemResponse.class);
                 Item item = itemResponse.getItemList().get(0);
-                binding.setDataItem(item);
+                binding.setData(item);
                 Glide.with(getBaseContext()).load(item.getImage()).apply(options).into(binding.ivGambar);
                 Toast.makeText(AddEditActivity.this,
                         itemResponse.getMessage(), Toast.LENGTH_SHORT).show();

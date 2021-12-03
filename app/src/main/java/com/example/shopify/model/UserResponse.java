@@ -6,6 +6,7 @@ import java.util.List;
 
 public class UserResponse {
     private String message;
+    private String success;
 
     @SerializedName("user")
     private List<User> userList;

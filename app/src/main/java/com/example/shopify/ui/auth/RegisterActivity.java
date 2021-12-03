@@ -11,8 +11,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -23,11 +26,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.shopify.R;
 import com.example.shopify.api.UserApi;
+import com.example.shopify.databinding.ActivityLoginBinding;
+import com.example.shopify.databinding.ActivityRegisterBinding;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
+import com.example.shopify.preferences.UserPreferences;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -35,27 +42,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText etName, etEmail, etPassword;
-    private MaterialButton btnRegister, btnLogin, btnClear;
     private RequestQueue queue;
+    private ActivityRegisterBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         queue = Volley.newRequestQueue(this);
 
-        etName = findViewById(R.id.etName);
-        etEmail = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-
-        btnRegister = findViewById(R.id.btnRegister);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnClear =findViewById(R.id.btnClear);
-
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
@@ -63,18 +61,16 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        binding.btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(validateForm()){
-                    register(etName.getText().toString(),
-                            etEmail.getText().toString().trim(),
-                            etPassword.getText().toString().trim());
+                    register();
                 }
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        binding.btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clearField();
@@ -82,51 +78,59 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void register(String name, String email, String password){
+    private void register(){
+        setLoading(true);
         if (validateForm()) {
-            User user = new User(name, email, password);
-
-            StringRequest stringRequest = new StringRequest(POST, UserApi.REGISTER_URL, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(POST, UserApi.REGISTER_URL,
+                    new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Gson gson = new Gson();
-                    UserResponse userResponse = gson.fromJson(response, UserResponse.class);
-                    if(userResponse.getMessage().equals("Register Success"))
-                    {
-                        Toast.makeText(RegisterActivity.this, "Register Success!", Toast.LENGTH_SHORT).show();
-                        AlertDialog dialog = new AlertDialog.Builder(RegisterActivity.this)
-                                .setTitle("Register Success")
-                                .setMessage("Email verification has been sent to your email address. You must verify to access Shopify")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        toLoginActivity();
-                                    }
-                                }).setCancelable(false).show();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String success = jsonObject.getString("success");
+                        Log.d("test","test1");
+                        if(success.equals("1")){
+                            Log.d("test","test2");
+                            Toast.makeText(RegisterActivity.this, "Register Success!", Toast.LENGTH_SHORT).show();
+                            AlertDialog dialog = new AlertDialog.Builder(RegisterActivity.this)
+                                    .setTitle("Register Success")
+                                    .setMessage("Email verification has been sent to your email address. You must verify to access Shopify")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            toLoginActivity();
+                                        }
+                                    }).setCancelable(false).create();
+                            dialog.show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(RegisterActivity.this, "Register error!" +e.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        setLoading(false);
                     }
-                    Intent returnIntent = new Intent();
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     try {
-                        String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                        JSONObject errors = new JSONObject(responseBody);
-                        Toast.makeText(RegisterActivity.this, errors.getString("message"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Register Error!" +error.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        setLoading(false);
                     } catch (Exception e) {
                         Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }) {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> params= new HashMap<String, String>();
-                    params.put("email",email);
-                    params.put("name",name);
-                    params.put("password",password);
+                public Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params= new HashMap<String, String>();
+                    params.put("Content-Type","application/x-www-form-urlencoded");
+                    params.put("Accept", "application/json");
+                    params.put("email",binding.etEmail.getText().toString());
+                    params.put("name",binding.etName.getText().toString());
+                    params.put("password",binding.etPassword.getText().toString());
                     return params;
                 }
             };
@@ -135,17 +139,17 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void clearField(){
-        etName.setText("");
-        etEmail.setText("");
-        etPassword.setText("");
+        binding.etName.setText("");
+        binding.etEmail.setText("");
+        binding.etPassword.setText("");
     }
 
 
     private boolean validateForm(){
         /* Check username & password is empty or not */
-        if(etEmail.getText().toString().trim().isEmpty()
-                || etPassword.getText().toString().trim().isEmpty() || etName.getText().toString().trim().isEmpty()){
-            Toast.makeText(RegisterActivity.this,"Masih ada yang kosong, tuh!",Toast.LENGTH_SHORT).show();
+        if(binding.etEmail.getText().toString().trim().isEmpty()
+                || binding.etPassword.getText().toString().trim().isEmpty() || binding.etName.getText().toString().trim().isEmpty()){
+            Toast.makeText(RegisterActivity.this,"Fill all the form please..",Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -156,5 +160,17 @@ public class RegisterActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void setLoading(boolean isLoading) {
+        LinearLayout layoutLoading = findViewById(R.id.loading_layout);
+        if (isLoading) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            layoutLoading.setVisibility(View.VISIBLE);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            layoutLoading.setVisibility(View.INVISIBLE);
+        }
     }
 }

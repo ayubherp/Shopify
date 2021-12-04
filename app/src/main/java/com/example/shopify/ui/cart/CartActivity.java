@@ -44,15 +44,24 @@ import java.util.Map;
 public class CartActivity extends AppCompatActivity {
     ActivityCartBinding binding;
     private RequestQueue queue;
+    Intent intent;
+    private String token;
+    private Long user_id;
+    private String user_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
         binding = ActivityCartBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        intent = getIntent();
+        token = intent.getStringExtra("token");
+        user_id = intent.getLongExtra("user_id",2);
+        user_name = intent.getStringExtra("user_name");
+
         queue = Volley.newRequestQueue(this);
-        changeFragment(new CartFragment());
+
         binding.btnHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,9 +69,16 @@ public class CartActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        changeFragment(new CartFragment());
     }
 
     private void changeFragment(Fragment fragment) {
+        Bundle bundle = new Bundle();
+        bundle.putString("token",token);
+        bundle.putLong("user_id",user_id);
+        bundle.putString("user_name",user_name);
+        fragment.setArguments(bundle);
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.layout_fragment,fragment)
@@ -70,7 +86,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
 
-    public void updateCart(long id, long id_user,long id_item, int amount, double subtotal, boolean status) {
+    public void updateCart(long id, long id_user,long id_item, int amount, double subtotal, int status) {
         setLoading(true);
         Cart cart = new Cart (
                 id_user,
@@ -113,6 +129,8 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }
@@ -160,6 +178,8 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }

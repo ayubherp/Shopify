@@ -44,6 +44,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
     private List<Item> itemList;
     private Context context;
     private RequestQueue queue;
+    private String token;
 
     public CartAdapter(List<Cart> cartList, List<Item> itemList, Context context){
         this.cartList = cartList;
@@ -107,7 +108,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                     cart.setSubtotal(item.getPrice()*temp);
                     ((CartActivity) context).updateCart(
                             cart.getId(),cart.getId_user(),cart.getId_item(),
-                            cart.getAmount(),cart.getSubtotal(),false);
+                            cart.getAmount(),cart.getSubtotal(),0);
                     notifyDataSetChanged();
                 }
             }
@@ -127,7 +128,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                     cart.setSubtotal(item.getPrice()*temp);
                     ((CartActivity) context).updateCart(
                             cart.getId(),cart.getId_user(),cart.getId_item(),
-                            cart.getAmount(),cart.getSubtotal(),false);
+                            cart.getAmount(),cart.getSubtotal(),0);
                     Toast.makeText(context, "Item added ", Toast.LENGTH_SHORT).show();
                     notifyDataSetChanged();
                     Intent intent = new Intent(context, CartActivity.class);
@@ -141,6 +142,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
     @Override
     public int getItemCount() {
         return cartList.size();
+    }
+
+    public void setAdapterToken(String token){
+        this.token = token;
     }
 
     public void setCartList(List<Cart> cartList) {
@@ -185,6 +190,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
+                    String auth = "Bearer " + token;
+                    headers.put("Authorization", auth);
                     headers.put("Accept", "application/json");
                     return headers;
                 }
@@ -208,7 +215,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
                     .updateCart(
                             cart.getId(),cart.getId_user(),
                             cart.getId_item(), cart.getAmount(),
-                            cart.getSubtotal(), true);
+                            cart.getSubtotal(), 1);
         }
         cartList.clear();
         notifyDataSetChanged();

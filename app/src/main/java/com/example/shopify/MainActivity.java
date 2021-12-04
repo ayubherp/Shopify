@@ -86,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
+                intent.putExtra("user_id",userPreferences.getUserLogin().getId());
+                intent.putExtra("user_name",userPreferences.getUserLogin().getName());
                 startActivity(intent);
             }
         });
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 user.getId(),
                 item.getId(), 1,
                 item.getPrice(),
-                false
+                0
         );
         StringRequest stringRequest = new StringRequest(POST, CartApi.ADD_URL,
                 new Response.Listener<String>() {
@@ -136,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }

@@ -90,6 +90,7 @@ public class AdminUserFragment extends Fragment {
                 adapter.setUserList(userResponse.getUserList());
                 adapter.getFilter().filter(binding.svUser.getQuery());
                 Toast.makeText(getContext(), userResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.srUser.setRefreshing(false);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -98,19 +99,19 @@ public class AdminUserFragment extends Fragment {
                     String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
                     Toast.makeText(getContext(), errors.getString("message"), Toast.LENGTH_SHORT).show();
+                    binding.srUser.setRefreshing(false);
                 } catch (Exception e) {
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    binding.srUser.setRefreshing(false);
                 }
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Log.d("test","test0");
                 HashMap<String, String> headers = new HashMap<String, String>();
                 String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
                 headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
-                Log.d("test","test01");
                 return headers;
             }
         };

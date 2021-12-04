@@ -7,6 +7,9 @@ import java.util.List;
 public class UserResponse {
     private String message;
 
+    @SerializedName("user")
+    private User user;
+
     @SerializedName("data")
     private List<User> userList;
 
@@ -24,5 +27,13 @@ public class UserResponse {
 
     public void setUserList(List<User> userList) {
         this.userList = userList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

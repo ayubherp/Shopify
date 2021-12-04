@@ -135,7 +135,6 @@ public class AddEditActivity extends AppCompatActivity {
         long id = getIntent().getLongExtra("id", -1);
         if (id == -1) {
             binding.tvTitle.setText(R.string.tambah_produk);
-
             binding.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -235,11 +234,19 @@ public class AddEditActivity extends AppCompatActivity {
                         .centerCrop()
                         .placeholder(R.mipmap.ic_launcher_round)
                         .error(R.mipmap.ic_launcher_round);
+
                 ItemResponse itemResponse =
                         gson.fromJson(response, ItemResponse.class);
-                Item item = itemResponse.getItemList().get(0);
+                Item item = itemResponse.getItem();
+
                 binding.setData(item);
-                Glide.with(getBaseContext()).load(item.getImage()).apply(options).into(binding.ivGambar);
+                byte[] imageByteArray = Base64.decode(item.getImage(),Base64.DEFAULT);
+                Glide.with(AddEditActivity.this)
+                        .asBitmap()
+                        .load(imageByteArray)
+                        .apply(options)
+                        .placeholder(R.drawable.no_image)
+                        .into(binding.ivGambar);
                 Toast.makeText(AddEditActivity.this,
                         itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 setLoading(false);
@@ -345,10 +352,10 @@ public class AddEditActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Gson gson = new Gson();
 
-                ItemResponse produkResponse =
+                ItemResponse itemResponse =
                         gson.fromJson(response, ItemResponse.class);
                 Toast.makeText(AddEditActivity.this,
-                        produkResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();

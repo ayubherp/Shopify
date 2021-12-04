@@ -9,6 +9,7 @@ import com.example.shopify.adapter.UserAdapter;
 import com.example.shopify.model.ItemResponse;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
+import com.example.shopify.preferences.UserPreferences;
 import com.example.shopify.ui.home.AdminHomeFragment;
 import com.example.shopify.ui.home.HomeFragment;
 import com.google.gson.Gson;
@@ -61,6 +62,7 @@ public class AdminActivity extends AppCompatActivity {
     private ItemAdapter itemAdapter;
     private UserAdapter userAdapter;
     private RequestQueue queue;
+    private UserPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +70,9 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
         binding = ActivityAdminBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         queue = Volley.newRequestQueue(this);
+        userPreferences = new UserPreferences(this);
 
         binding.navView.setSelectedItemId(R.id.navigation_admin_home);
         binding.navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -91,45 +95,6 @@ public class AdminActivity extends AppCompatActivity {
         changeFragment(new AdminHomeFragment());
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == LAUNCH_ADD_ACTIVITY && resultCode == Activity.RESULT_OK)
-            getAllItem();
-    }
-
-    private void getAllItem() {
-        StringRequest stringRequest = new StringRequest(GET, ItemApi.GET_ALL_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Gson gson = new Gson();
-                ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
-                itemAdapter.setProdukList(itemResponse.getItemList());
-                Toast.makeText(AdminActivity.this, itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
-                    String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                    JSONObject errors = new JSONObject(responseBody);
-                    Toast.makeText(AdminActivity.this, errors.getString("message"), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(AdminActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Accept", "application/json");
-
-                return headers;
-            }
-        };
-        queue.add(stringRequest);
-    }
 
     public void deleteItem(long id) {
         setLoading(true);
@@ -140,7 +105,6 @@ public class AdminActivity extends AppCompatActivity {
                 ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
                 setLoading(false);
                 Toast.makeText(AdminActivity.this, itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                getAllItem();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -158,8 +122,9 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
-
                 return headers;
             }
         };
@@ -175,8 +140,8 @@ public class AdminActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 UserResponse userResponse = gson.fromJson(response, UserResponse.class);
                 setLoading(false);
-                Toast.makeText(AdminActivity.this, userResponse.getMessage(), Toast.LENGTH_SHORT).show();
-                getAllItem();
+                Toast.makeText(AdminActivity.this,
+                        userResponse.getMessage() + userResponse.getUser().getName(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -194,8 +159,9 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
-
                 return headers;
             }
         };
@@ -209,8 +175,22 @@ public class AdminActivity extends AppCompatActivity {
                 .commit();
     }
 
+    public void toEditItemActivity(Long id){
+        if(id!=null)
+        {
+            Intent intent = new Intent(this, AddEditActivity.class);
+            intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
+            intent.putExtra("id",id);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Failed to get id", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void setLoading(boolean isLoading) {
-        LinearLayout layoutLoading = findViewById(R.id.loading_layout);
+        LinearLayout layoutLoading = findViewById(R.id.loading_admin);
         if (isLoading) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

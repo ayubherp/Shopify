@@ -81,14 +81,15 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CartFragment extends Fragment {
-    private User user;
-    private UserPreferences userPreferences;
     private List<Cart> cartList;
     private CartAdapter adapter;
     private FragmentCartBinding binding;
     private NotificationManagerCompat notificationManager;
     private Notification notification;
     private RequestQueue queue;
+    private String token;
+    private Long user_id;
+    private String user_name;
 
     public CartFragment(){
     }
@@ -98,8 +99,13 @@ public class CartFragment extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_cart, container, false);
         queue = Volley.newRequestQueue(this.getContext());
-        userPreferences = new UserPreferences(getContext().getApplicationContext());
-        user = userPreferences.getUserLogin();
+
+        if (getArguments() != null) {
+            token = getArguments().getString("token");
+            user_id = getArguments().getLong("user_id");
+            user_name = getArguments().getString("user_name");
+        }
+
         notificationManager = NotificationManagerCompat.from(getContext());
         binding.srCart.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -107,6 +113,7 @@ public class CartFragment extends Fragment {
                 getAllCart();
             }
         });
+
         binding.btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,15 +178,16 @@ public class CartFragment extends Fragment {
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 CartResponse itemResponse = gson.fromJson(response, CartResponse.class);
-                List<Cart> user_cart=null;
+                List<Cart> user_cart= new ArrayList<>();
                 for(int i=0; i<itemResponse.getCartList().size(); i++)
                 {
-                    if(itemResponse.getCartList().get(i).getId_user().equals(user.getId())
-                        && !itemResponse.getCartList().get(i).isStatus())
+                    if(itemResponse.getCartList().get(i).getId_user().equals(user_id)
+                        && itemResponse.getCartList().get(i).getStatus()==0)
                     {
                         user_cart.add(itemResponse.getCartList().get(i));
                     }
                 }
+                adapter.setAdapterToken(token);
                 adapter.setCartList(user_cart);
 
                 Toast.makeText(getContext(),
@@ -203,12 +211,10 @@ public class CartFragment extends Fragment {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Log.d("test","test0");
                 HashMap<String, String> headers = new HashMap<String, String>();
-                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                String auth = "Bearer " + token;
                 headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
-                Log.d("test","test01");
                 return headers;
             }
         };
@@ -228,7 +234,7 @@ public class CartFragment extends Fragment {
                 .setContentText("~See detail~")
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("We charged your wallet balance : Rp. " +String.format("%.0f",totalPrice(cartList))
-                                +". Thanks for shopping with us, "+user.getName() )
+                                +". Thanks for shopping with us, "+user_name )
                         .setBigContentTitle("Payment Confirmed")
                         .setSummaryText("Summary"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -273,7 +279,7 @@ public class CartFragment extends Fragment {
         cellSupplier.setPaddingBottom(10);
         cellSupplier.setBorder(Rectangle.NO_BORDER);
         Paragraph kepada = new Paragraph(
-                "Kepada Yth: \n" + user.getName() + "\n",
+                "Kepada Yth: \n" + user_name + "\n",
                 new com.itextpdf.text.Font(Font.FontFamily.HELVETICA, 10,
                         Font.NORMAL, BaseColor.BLACK));
         cellSupplier.addElement(kepada);

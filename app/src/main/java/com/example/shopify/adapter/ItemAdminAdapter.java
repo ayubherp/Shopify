@@ -43,10 +43,12 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
     private List<Item> itemList, filteredItemList;
     private Context context;
     private Item item;
+    private UserPreferences userPreferences;
 
     public ItemAdminAdapter(List<Item> data, Context context){
         itemList = data;
         this.context = context;
+        userPreferences = new UserPreferences(context);
     }
 
     public class viewHolderItem extends RecyclerView.ViewHolder {
@@ -77,16 +79,12 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        item = filteredItemList.get(position);
+        Item item = filteredItemList.get(position);
         holder.binding.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TEST", "onClick: " + holder.getAdapterPosition());
-                Bundle bundle = new Bundle();
-                bundle.putLong("id",item.getId());
-                AdminItemFragment adminItemFragment = new AdminItemFragment();
-                adminItemFragment.setArguments(bundle);
-                adminItemFragment.toEditItemActivity();
+                ((AdminActivity)context).toEditItemActivity(item.getId());
             }
         });
         holder.binding.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -110,9 +108,10 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
         holder.binding.tvType.setText(item.getType());
         DecimalFormat rupiah = (DecimalFormat) DecimalFormat.getCurrencyInstance(new Locale("in", "ID"));
         holder.binding.tvPrice.setText(rupiah.format(item.getPrice()));
-        Glide.with(context)
+        byte[] imageByteArray = Base64.decode(item.getImage(),Base64.DEFAULT);
+        Glide.with(context.getApplicationContext())
                 .asBitmap()
-                .load(item.getImage())
+                .load(imageByteArray)
                 .placeholder(R.drawable.no_image)
                 .into(holder.binding.ivImage);
         holder.bindView(itemList.get(position));
@@ -154,7 +153,6 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                filteredItemList.clear();
                 filteredItemList.addAll((List<Item>) filterResults.values);
                 notifyDataSetChanged();
             }

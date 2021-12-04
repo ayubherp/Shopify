@@ -17,9 +17,9 @@ public class Cart {
     private Long id_item;
     private int amount;
     private double subtotal;
-    private boolean status;
+    private int status;
 
-    public Cart(Long id_user, Long id_item, int amount, double subtotal, boolean status)
+    public Cart(Long id_user, Long id_item, int amount, double subtotal, int status)
     {
         this.id_user = id_user;
         this.id_item = id_item;
@@ -68,11 +68,11 @@ public class Cart {
         this.subtotal = subtotal;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }

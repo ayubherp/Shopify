@@ -89,7 +89,6 @@ public class AdminItemFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddEditActivity.class);
                 intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
-                intent.putExtra("id", userPreferences.getUserLogin().getId());
                 startActivity(intent);
             }
         });
@@ -111,23 +110,6 @@ public class AdminItemFragment extends Fragment {
         return binding.getRoot();
     }
 
-
-    public void toEditItemActivity(){
-        long id;
-        Bundle bundle = this.getArguments();
-        if(bundle!=null)
-        {
-            id = bundle.getLong("id");
-                    Intent intent = new Intent(getContext(), AddEditActivity.class);
-            intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
-            intent.putExtra("id",id);
-            startActivity(intent);
-        }
-        else
-        {
-            Toast.makeText(getContext(), "Failed to get bundle", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void getAllItem(){
         binding.srItem.setRefreshing(true);

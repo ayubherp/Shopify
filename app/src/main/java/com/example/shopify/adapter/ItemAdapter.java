@@ -3,6 +3,7 @@ package com.example.shopify.adapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +28,10 @@ import com.example.shopify.databinding.ItemViewBinding;
 import com.example.shopify.model.Item;
 import com.example.shopify.ui.item.ItemFragment;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem>
         implements Filterable {
@@ -57,10 +60,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
         public void bindView(Item item)
         {
             binding.setItem(item);
-            Glide.with(context)
-                    .load(item.getImage())
-                    .placeholder(R.drawable.no_image)
-                    .into(binding.imgView);
         }
     }
 
@@ -74,19 +73,28 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        holder.bindView(itemList.get(position));
+        item = filteredItemList.get(position);
         holder.binding.layoutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TEST", "onClick: " + holder.getAdapterPosition());
                 item = itemList.get(holder.getAdapterPosition());
+                //init dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getRootView().getContext());
                 AddToCartDialogBinding addDialogBinding =
                         DataBindingUtil.inflate(
                                 LayoutInflater.from(v.getRootView().getContext()), R.layout.add_to_cart_dialog, null, false
                         );
                 addDialogBinding.setItemData(item);
+                //convert image to byte
+                byte[] imageByteArray = Base64.decode(item.getImage(),Base64.DEFAULT);
+                Glide.with(context.getApplicationContext())
+                        .asBitmap()
+                        .load(imageByteArray)
+                        .placeholder(R.drawable.no_image)
+                        .into(addDialogBinding.imageDialog);
                 alertDialog.setView(addDialogBinding.getRoot());
+                //add to Cart
                 addDialogBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -103,6 +111,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
                 alertDialog.show();
             }
         });
+        holder.binding.txtMerk.setText(item.getName());
+        holder.binding.txtType.setText(item.getType());
+        DecimalFormat rupiah = (DecimalFormat) DecimalFormat.getCurrencyInstance(new Locale("in", "ID"));
+        holder.binding.txtPrice.setText(rupiah.format(item.getPrice()));
+        byte[] imageByteArray = Base64.decode(item.getImage(),Base64.DEFAULT);
+        Glide.with(context.getApplicationContext())
+                .asBitmap()
+                .load(imageByteArray)
+                .placeholder(R.drawable.no_image)
+                .into(holder.binding.imgView);
+        holder.bindView(itemList.get(position));
     }
 
     @Override

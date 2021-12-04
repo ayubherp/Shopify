@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -43,6 +44,7 @@ import com.example.shopify.databinding.ActivityAddEditBinding;
 import com.example.shopify.databinding.ActivityMainBinding;
 import com.example.shopify.model.Item;
 import com.example.shopify.model.ItemResponse;
+import com.example.shopify.preferences.UserPreferences;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -62,6 +64,9 @@ public class AddEditActivity extends AppCompatActivity {
     private Bitmap bitmap = null;
     private RequestQueue queue;
     private ActivityAddEditBinding binding;
+    private UserPreferences userPreferences;
+    Intent intent;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +75,9 @@ public class AddEditActivity extends AppCompatActivity {
         binding = ActivityAddEditBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         queue = Volley.newRequestQueue(this);
+        userPreferences = new UserPreferences(this);
+        intent = getIntent();
+        token = intent.getStringExtra("token");
         layoutLoading = findViewById(R.id.layout_loading);
 
         binding.ivGambar.setOnClickListener(new View.OnClickListener() {
@@ -255,6 +263,8 @@ public class AddEditActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }
@@ -303,6 +313,8 @@ public class AddEditActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }
@@ -361,6 +373,8 @@ public class AddEditActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }

@@ -127,8 +127,9 @@ public class ItemFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Log.d("test","test0");
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 Log.d("test","test01");
                 return headers;

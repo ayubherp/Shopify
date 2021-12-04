@@ -1,11 +1,17 @@
 package com.example.shopify.ui.item;
 
 import static com.android.volley.Request.Method.GET;
+import static com.example.shopify.preferences.UserPreferences.KEY_EMAIL;
+import static com.example.shopify.preferences.UserPreferences.KEY_TOKEN;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -42,6 +49,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,6 +88,8 @@ public class AdminItemFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddEditActivity.class);
+                intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
+                intent.putExtra("id", userPreferences.getUserLogin().getId());
                 startActivity(intent);
             }
         });
@@ -100,6 +111,24 @@ public class AdminItemFragment extends Fragment {
         return binding.getRoot();
     }
 
+
+    public void toEditItemActivity(){
+        long id;
+        Bundle bundle = this.getArguments();
+        if(bundle!=null)
+        {
+            id = bundle.getLong("id");
+                    Intent intent = new Intent(getContext(), AddEditActivity.class);
+            intent.putExtra("token",userPreferences.getUserLogin().getAccess_token());
+            intent.putExtra("id",id);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getContext(), "Failed to get bundle", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void getAllItem(){
         binding.srItem.setRefreshing(true);
 
@@ -107,13 +136,10 @@ public class AdminItemFragment extends Fragment {
                 ItemApi.GET_ALL_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("test","test1");
                 Gson gson = new Gson();
                 ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
-                Log.d("test","test11");
                 adapter.setProdukList(itemResponse.getItemList());
                 adapter.getFilter().filter(binding.svItem.getQuery());
-                Log.d("test","test12");
                 Toast.makeText(getContext(),
                         itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 binding.srItem.setRefreshing(false);
@@ -123,26 +149,22 @@ public class AdminItemFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 binding.srItem.setRefreshing(false);
                 try{
-                    Log.d("test","test21");
                     String responseBody = new String(error.networkResponse.data,
                             StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
-                    Log.d("test","test22");
                     Toast.makeText(getContext(),
                             errors.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    Log.d("test","test3");
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Log.d("test","test0");
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("access_token",userPreferences.getUserLogin().getAccess_token());
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
-                Log.d("test","test01");
                 return headers;
             }
         };
@@ -153,4 +175,4 @@ public class AdminItemFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-}
+ }

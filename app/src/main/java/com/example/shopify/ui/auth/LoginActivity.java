@@ -4,6 +4,7 @@ import static com.android.volley.Request.Method.POST;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,7 +50,6 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
-
     private ActivityLoginBinding binding;
     private UserPreferences userPreferences;
     private RequestQueue queue;
@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
+                    String token = jsonObject.getString("access_token");
                     if(success.equals("1"))
                     {
                         Gson gson = new Gson();
@@ -110,7 +111,8 @@ public class LoginActivity extends AppCompatActivity {
                         User user = authResponse.getUser();
                         if(user.getEmail_verified_at()!=null)
                         {
-                            userPreferences.setUser(user.getId(), user.getName(), user.getEmail(), user.getAccess_token());
+                            userPreferences.setUser(user.getId(), user.getName(),
+                                    user.getEmail(), user.getPassword(), token);
                             checkLogin();
                         }
                         else

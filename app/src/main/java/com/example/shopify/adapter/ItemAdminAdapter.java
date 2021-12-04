@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,12 +27,16 @@ import com.example.shopify.R;
 import com.example.shopify.databinding.ItemAdminViewBinding;
 import com.example.shopify.databinding.ItemViewBinding;
 import com.example.shopify.model.Item;
+import com.example.shopify.preferences.UserPreferences;
 import com.example.shopify.ui.item.AddEditActivity;
+import com.example.shopify.ui.item.AdminItemFragment;
 import com.example.shopify.ui.item.ItemFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.viewHolderItem>
         implements Filterable {
@@ -58,11 +64,6 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
         public void bindView(Item item)
         {
             binding.setDataItem(item);
-            Glide.with(context)
-                    .load(item.getImage())
-                    .placeholder(R.drawable.no_image)
-                    .into(binding.ivImage);
-
         }
     }
 
@@ -76,18 +77,16 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        holder.bindView(itemList.get(position));
+        item = filteredItemList.get(position);
         holder.binding.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("TEST", "onClick: " + holder.getAdapterPosition());
-                item = itemList.get(holder.getAdapterPosition());
-                Intent i = new Intent(context, AddEditActivity.class);
-                i.putExtra("id", item.getId());
-
-                if (context instanceof AdminActivity)
-                    ((AdminActivity) context).startActivityForResult(i,
-                            AdminActivity.LAUNCH_ADD_ACTIVITY);
+                Bundle bundle = new Bundle();
+                bundle.putLong("id",item.getId());
+                AdminItemFragment adminItemFragment = new AdminItemFragment();
+                adminItemFragment.setArguments(bundle);
+                adminItemFragment.toEditItemActivity();
             }
         });
         holder.binding.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +106,16 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
                         .show();
             }
         });
+        holder.binding.tvName.setText(item.getName());
+        holder.binding.tvType.setText(item.getType());
+        DecimalFormat rupiah = (DecimalFormat) DecimalFormat.getCurrencyInstance(new Locale("in", "ID"));
+        holder.binding.tvPrice.setText(rupiah.format(item.getPrice()));
+        Glide.with(context)
+                .asBitmap()
+                .load(item.getImage())
+                .placeholder(R.drawable.no_image)
+                .into(holder.binding.ivImage);
+        holder.bindView(itemList.get(position));
     }
 
     @Override

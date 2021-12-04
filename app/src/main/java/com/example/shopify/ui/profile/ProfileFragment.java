@@ -41,7 +41,7 @@ public class ProfileFragment extends Fragment {
         binding.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getContext()).changeFragment(new EditProfileFragment());
+                ((MainActivity)getActivity()).changeFragment(new EditProfileFragment());
             }
         });
         binding.btnMap.setOnClickListener(new View.OnClickListener() {

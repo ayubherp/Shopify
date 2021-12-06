@@ -100,6 +100,13 @@ public class AnnounceFragment extends Fragment {
                 notificationManager.notify(1, notification);
             }
         });
+        binding.btnChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChartDialog chartDialog = new ChartDialog();
+                chartDialog.show(getActivity().getSupportFragmentManager(), null);
+            }
+        });
         binding.btnDevInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

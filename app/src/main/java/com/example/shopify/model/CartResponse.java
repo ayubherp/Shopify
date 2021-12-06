@@ -28,4 +28,12 @@ public class CartResponse {
     public void setCartList(List<Cart> cartList) {
         this.cartList = cartList;
     }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
 }

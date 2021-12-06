@@ -7,7 +7,7 @@
     tools:context=".ui.cart.CartActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/layout_fragment"
+        android:id="@+id/layoutCart_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -25,5 +25,10 @@
         android:layout_marginBottom="18dp"
         android:layout_marginRight="18dp"
         app:srcCompat="@drawable/ic_baseline_home_24" />
+
+    <include
+        android:id="@+id/loading_cart"
+        layout="@layout/layout_loading"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

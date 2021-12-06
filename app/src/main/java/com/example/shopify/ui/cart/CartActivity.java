@@ -81,7 +81,7 @@ public class CartActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.layout_fragment,fragment)
+                .replace(R.id.layoutCart_fragment,fragment)
                 .commit();
     }
 
@@ -105,10 +105,10 @@ public class CartActivity extends AppCompatActivity {
                         gson.fromJson(response, CartResponse.class);
                 Toast.makeText(CartActivity.this,
                         cartResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                setLoading(false);
                 Intent returnIntent = new Intent();
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
-                setLoading(false);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -188,14 +188,14 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void setLoading(boolean isLoading) {
-        LinearLayout layoutLoading = findViewById(R.id.loading_layout);
+        LinearLayout layoutLoading = findViewById(R.id.loading_cart);
         if (isLoading) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             layoutLoading.setVisibility(View.VISIBLE);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            layoutLoading.setVisibility(View.VISIBLE);
+            layoutLoading.setVisibility(View.INVISIBLE);
         }
     }
 }

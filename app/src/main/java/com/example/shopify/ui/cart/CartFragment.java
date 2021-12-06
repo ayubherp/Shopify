@@ -46,6 +46,7 @@ import com.example.shopify.api.CartApi;
 import com.example.shopify.api.ItemApi;
 import com.example.shopify.databinding.FragmentCartBinding;
 import com.example.shopify.model.Cart;
+import com.example.shopify.model.CartItem;
 import com.example.shopify.model.CartResponse;
 import com.example.shopify.model.Item;
 import com.example.shopify.model.ItemResponse;
@@ -81,6 +82,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CartFragment extends Fragment {
+    private List<CartItem> cartItemList;
     private List<Cart> cartList;
     private CartAdapter adapter;
     private FragmentCartBinding binding;
@@ -90,6 +92,7 @@ public class CartFragment extends Fragment {
     private String token;
     private Long user_id;
     private String user_name;
+    private int refresh=0;
 
     public CartFragment(){
     }
@@ -99,7 +102,7 @@ public class CartFragment extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_cart, container, false);
         queue = Volley.newRequestQueue(this.getContext());
-
+        cartItemList = new ArrayList<>();
         if (getArguments() != null) {
             token = getArguments().getString("token");
             user_id = getArguments().getLong("user_id");
@@ -110,14 +113,22 @@ public class CartFragment extends Fragment {
         binding.srCart.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getAllCart();
+                if(refresh<1){
+                    getAllCart();
+                    binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
+                    refresh++;
+                }
+                else
+                {
+                    binding.srCart.setRefreshing(false);
+                }
             }
         });
 
         binding.btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(totalPrice(cartList)!=0)
+                if(totalPrice(cartItemList)!=0)
                 {
                     //send notification
                     sendNotification();
@@ -131,7 +142,7 @@ public class CartFragment extends Fragment {
                     }
                     //remove from cart database
                     adapter.payCartList();
-                    binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));
+                    binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
                     Toast.makeText(view.getRootView().getContext(), "Payment success", Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -140,18 +151,20 @@ public class CartFragment extends Fragment {
                 }
             }
         });
-        adapter = new CartAdapter(new ArrayList<>(), new ArrayList<>(), this.getContext());
+        adapter = new CartAdapter(new ArrayList<>(), this.getContext());
         binding.btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 adapter.resetCartList();
-                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartList)));
+                binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
                 Toast.makeText(v.getRootView().getContext(), "Reset Cart success", Toast.LENGTH_SHORT).show();
             }
         });
         binding.rvCart.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.rvCart.setAdapter(adapter);
         getAllCart();
+        cartItemList = adapter.getCartItemList();
+        binding.txtTotal.setText(String.format("%.0f",totalPrice(cartItemList)));
         return binding.getRoot();
     }
 
@@ -161,10 +174,10 @@ public class CartFragment extends Fragment {
         binding = null;
     }
 
-    public double totalPrice(List<Cart> cartList){
+    public double totalPrice(List<CartItem> cartItemList){
         double totalPrice = 0;
-        for (int i=0; i<cartList.size();i++){
-            totalPrice += cartList.get(i).getSubtotal();
+        for (int i=0; i<cartItemList.size();i++){
+            totalPrice += cartItemList.get(i).getSubtotal();
         }
         return totalPrice;
     }
@@ -178,20 +191,10 @@ public class CartFragment extends Fragment {
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 CartResponse itemResponse = gson.fromJson(response, CartResponse.class);
-                List<Cart> user_cart= new ArrayList<>();
-                for(int i=0; i<itemResponse.getCartList().size(); i++)
-                {
-                    if(itemResponse.getCartList().get(i).getId_user().equals(user_id)
-                        && itemResponse.getCartList().get(i).getStatus()==0)
-                    {
-                        user_cart.add(itemResponse.getCartList().get(i));
-                    }
-                }
-                adapter.setAdapterToken(token);
-                adapter.setCartList(user_cart);
-
+                adapter.setUser(token,user_id,user_name);
                 Toast.makeText(getContext(),
                         itemResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                adapter.setCartItemList(itemResponse.getCartList());
                 binding.srCart.setRefreshing(false);
             }
         }, new Response.ErrorListener() {
@@ -233,7 +236,7 @@ public class CartFragment extends Fragment {
                 .setContentTitle("Shopify Cart Mail")
                 .setContentText("~See detail~")
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("We charged your wallet balance : Rp. " +String.format("%.0f",totalPrice(cartList))
+                        .bigText("We charged your wallet balance : Rp. " +String.format("%.0f",totalPrice(cartItemList))
                                 +". Thanks for shopping with us, "+user_name )
                         .setBigContentTitle("Payment Confirmed")
                         .setSummaryText("Summary"))
@@ -247,6 +250,7 @@ public class CartFragment extends Fragment {
 
         notificationManager.notify(3, notification);
     }
+
 
     private void createPaymentPDF() throws FileNotFoundException, DocumentException {
         File folder = getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -339,11 +343,10 @@ public class CartFragment extends Fragment {
         tableData.setWidthPercentage(100);
         tableData.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
         // Data pegawai jadi baris
-        for (Cart cart : adapter.getCartList()) {
-            Item item = adapter.getItemList().get(cart.getId_item().intValue());
-            tableData.addCell(item.getName());
-            tableData.addCell(item.getType());
-            tableData.addCell("Rp. "+ item.getPrice());
+        for (CartItem cart : adapter.getCartItemList()) {
+            tableData.addCell(cart.getName());
+            tableData.addCell(cart.getType());
+            tableData.addCell("Rp. "+ cart.getPrice());
             tableData.addCell(String.valueOf(cart.getAmount()));
             tableData.addCell("Rp. " + cart.getSubtotal());
         }

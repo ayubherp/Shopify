@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 userPreferences.logout();
-                Toast.makeText(getContext(), "Kami tunggu kedatangan anda kembali!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "We're waiting for your back", Toast.LENGTH_SHORT).show();
                 checkLogin();
             }
         });

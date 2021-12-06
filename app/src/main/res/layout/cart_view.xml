@@ -5,11 +5,8 @@
     >
     <data>
         <variable
-            name="items"
-            type="com.example.shopify.model.Item"/>
-        <variable
             name="carts"
-            type="com.example.shopify.model.Cart" />
+            type="com.example.shopify.model.CartItem" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -29,7 +26,7 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@{items.image}"
+                android:src="@{carts.image}"
                 android:id="@+id/imgCart"
                 />
             <LinearLayout
@@ -48,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="Brand"
-                        android:text="@{items.name}"
+                        android:text="@{carts.name}"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -61,10 +58,11 @@
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                     <TextView
+                        android:id="@+id/tvType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="Type"
-                        android:text="@{items.type}"
+                        android:text="@{carts.type}"
                         android:textSize="18sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
@@ -86,6 +84,7 @@
                         android:textSize="16sp"
                         />
                     <TextView
+                        android:id="@+id/tvSubtotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{String.format(@string/format_money,carts.subtotal)}"
@@ -114,10 +113,11 @@
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                     <TextView
+                        android:id="@+id/tvPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="XXXXXXX"
-                        android:text="@{String.valueOf(items.price)}"
+                        android:text="@{String.valueOf(carts.price)}"
                         android:textSize="14sp"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
@@ -135,6 +135,7 @@
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
                     <TextView
+                        android:id="@+id/tvAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="XX"
@@ -157,6 +158,7 @@
                         android:src="@drawable/ic_baseline_remove_24"
                         />
                     <TextView
+                        android:id="@+id/tvAmount2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{String.valueOf(carts.amount)}"

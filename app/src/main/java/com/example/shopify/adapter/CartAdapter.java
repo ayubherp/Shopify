@@ -45,6 +45,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
     private Context context;
     private RequestQueue queue;
     private String token;
+    private Cart cart;
+    private Item item;
 
     public CartAdapter(List<Cart> cartList, List<Item> itemList, Context context){
         this.cartList = cartList;
@@ -71,10 +73,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
         {
             binding.setCarts(cart);
             binding.setItems(item);
-            Glide.with(context)
-                    .load(item.getImage())
-                    .placeholder(R.drawable.no_image)
-                    .into(binding.imgCart);
         }
     }
 
@@ -89,8 +87,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.viewHolderCart
     @Override
     public void onBindViewHolder(@NonNull viewHolderCart holder, int position) {
         holder.bindView(cartList.get(position), itemList.get(position));
-        Cart cart = cartList.get(position);
-        Item item = itemList.get(position);
+        cart = cartList.get(position);
+        item = itemList.get(position);
 
         holder.binding.btnRemoveItem.setOnClickListener(new View.OnClickListener() {
             @Override

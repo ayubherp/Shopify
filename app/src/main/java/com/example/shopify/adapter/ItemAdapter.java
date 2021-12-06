@@ -39,8 +39,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
     private Context context;
     private Item item;
 
-    public ItemAdapter(List<Item> data, Context context){
-        itemList = data;
+    public ItemAdapter(List<Item> itemList, Context context){
+        this.itemList = itemList;
+        filteredItemList = new ArrayList<>(itemList);
         this.context = context;
     }
 
@@ -73,12 +74,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
-        item = filteredItemList.get(position);
+        Item item = filteredItemList.get(position);
         holder.binding.layoutCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TEST", "onClick: " + holder.getAdapterPosition());
-                item = itemList.get(holder.getAdapterPosition());
                 //init dialog
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getRootView().getContext());
                 AddToCartDialogBinding addDialogBinding =
@@ -121,15 +120,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.viewHolderItem
                 .load(imageByteArray)
                 .placeholder(R.drawable.no_image)
                 .into(holder.binding.imgView);
-        holder.bindView(itemList.get(position));
+        holder.bindView(filteredItemList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+        return filteredItemList.size();
     }
 
-    public void setProdukList(List<Item> itemList) {
+    public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
         filteredItemList = new ArrayList<>(itemList);
     }

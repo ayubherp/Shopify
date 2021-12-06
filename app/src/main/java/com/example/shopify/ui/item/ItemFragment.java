@@ -102,7 +102,7 @@ public class ItemFragment extends Fragment {
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 ItemResponse itemResponse = gson.fromJson(response, ItemResponse.class);
-                adapter.setProdukList(itemResponse.getItemList());
+                adapter.setItemList(itemResponse.getItemList());
                 adapter.getFilter().filter(binding.svItem.getQuery());
 
                 Toast.makeText(getContext(),

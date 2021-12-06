@@ -22,10 +22,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.shopify.R;
 import com.example.shopify.api.UserApi;
 import com.example.shopify.databinding.ActivityRegisterBinding;
+import com.example.shopify.ui.item.AddEditActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                         setLoading(false);
                         JSONObject jsonObject = new JSONObject(response);
                         String success = jsonObject.getString("success");
-                        Log.d("test","test1");
                         if(success.equals("1")){
-                            Log.d("test","test2");
                             Toast.makeText(RegisterActivity.this, "Register Success!", Toast.LENGTH_SHORT).show();
                             AlertDialog dialog = new AlertDialog.Builder(RegisterActivity.this)
                                     .setTitle("Register Success")
@@ -94,7 +94,6 @@ public class RegisterActivity extends AppCompatActivity {
                             dialog.show();
                         }
                     } catch (JSONException e) {
-                        Log.d("test","test3");
                         e.printStackTrace();
                         Toast.makeText(RegisterActivity.this, "Register error!" +e.toString(),
                                 Toast.LENGTH_SHORT).show();
@@ -104,21 +103,33 @@ public class RegisterActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    setLoading(false);
                     try {
-                        Toast.makeText(RegisterActivity.this, "Register Error!" +error.toString(),
+                        String responseBody = new String(error.networkResponse.data,
+                                StandardCharsets.UTF_8);
+                        JSONObject errors = new JSONObject(responseBody);
+                        Toast.makeText(RegisterActivity.this, errors.getString("message"),
                                 Toast.LENGTH_SHORT).show();
-                        Log.d("test","test4");
-                        setLoading(false);
+                            Toast.makeText(RegisterActivity.this, "Register Success!", Toast.LENGTH_SHORT).show();
+                            AlertDialog dialog = new AlertDialog.Builder(RegisterActivity.this)
+                                    .setTitle("Register Success")
+                                    .setMessage("Email verification has been sent to your email address. You must verify to access Shopify")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            toLoginActivity();
+                                        }
+                                    }).setCancelable(false).create();
+                            dialog.show();
                     } catch (Exception e) {
                         Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.d("test","test5");
                     }
                 }
             }) {
                 @Override
                 public Map<String, String> getParams() {
                     Map<String, String> params= new HashMap<String, String>();
-                    Log.d("test","test01");
                     params.put("name",binding.etName.getText().toString());
                     params.put("email",binding.etEmail.getText().toString());
                     params.put("password",binding.etPassword.getText().toString());
@@ -127,7 +138,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Log.d("test","test02");
                     Map<String,String> params = new HashMap<String, String>();
                     params.put("Content-Type","application/x-www-form-urlencoded");
                     return params;

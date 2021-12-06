@@ -42,13 +42,11 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
         implements Filterable {
     private List<Item> itemList, filteredItemList;
     private Context context;
-    private Item item;
-    private UserPreferences userPreferences;
 
-    public ItemAdminAdapter(List<Item> data, Context context){
-        itemList = data;
+    public ItemAdminAdapter(List<Item> itemList, Context context){
+        this.itemList = itemList;
+        filteredItemList = new ArrayList<>(itemList);
         this.context = context;
-        userPreferences = new UserPreferences(context);
     }
 
     public class viewHolderItem extends RecyclerView.ViewHolder {
@@ -80,10 +78,10 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
     @Override
     public void onBindViewHolder(@NonNull viewHolderItem holder, int position) {
         Item item = filteredItemList.get(position);
+
         holder.binding.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TEST", "onClick: " + holder.getAdapterPosition());
                 ((AdminActivity)context).toEditItemActivity(item.getId());
             }
         });
@@ -114,15 +112,15 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
                 .load(imageByteArray)
                 .placeholder(R.drawable.no_image)
                 .into(holder.binding.ivImage);
-        holder.bindView(itemList.get(position));
+        holder.bindView(filteredItemList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+        return filteredItemList.size();
     }
 
-    public void setProdukList(List<Item> itemList) {
+    public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
         filteredItemList = new ArrayList<>(itemList);
     }
@@ -139,8 +137,7 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
                     filtered.addAll(itemList);
                 } else {
                     for (Item item : itemList) {
-                        if (item.getName().toLowerCase()
-                                .contains(charSequenceString.toLowerCase()))
+                        if (item.getName().toLowerCase().contains(charSequenceString.toLowerCase()))
                             filtered.add(item);
                     }
                 }
@@ -153,6 +150,7 @@ public class ItemAdminAdapter extends RecyclerView.Adapter<ItemAdminAdapter.view
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filteredItemList.clear();
                 filteredItemList.addAll((List<Item>) filterResults.values);
                 notifyDataSetChanged();
             }

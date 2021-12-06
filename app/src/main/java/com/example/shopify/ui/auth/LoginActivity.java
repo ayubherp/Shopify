@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    setLoading(false);
                 }
 
                 checkLogin();
@@ -136,8 +137,10 @@ public class LoginActivity extends AppCompatActivity {
                     String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
                     Toast.makeText(LoginActivity.this, errors.getString("message"), Toast.LENGTH_SHORT).show();
+                    setLoading(false);
                 } catch (Exception e) {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    setLoading(false);
                 }
             }
         }) {

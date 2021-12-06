@@ -62,8 +62,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
 
     @Override
     public void onBindViewHolder(@NonNull viewHolderUser holder, int position) {
-        holder.bindView(userList.get(position));
-        User user = userList.get(position);
+        User user = filteredUserList.get(position);
+        holder.bindView(filteredUserList.get(position));
 
         holder.userBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +76,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                    ((AdminActivity) context).deleteUser(user.getId());
+                                ((AdminActivity) context).deleteUser(user.getId());
                             }
                         })
                         .show();
@@ -86,7 +86,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return filteredUserList.size();
     }
 
     public void setUserList(List<User> userList) {
@@ -105,8 +105,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.viewHolderUser
                     filtered.addAll(userList);
                 } else {
                     for (User user : userList) {
-                        if (user.getName().toLowerCase()
-                                .contains(charSequenceString.toLowerCase()))
+                        if (user.getName().toLowerCase().contains(charSequenceString.toLowerCase()))
                             filtered.add(user);
                     }
                 }

@@ -2,6 +2,8 @@ package com.example.shopify.ui.profile;
 
 import static com.android.volley.Request.Method.PUT;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
@@ -23,12 +26,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.shopify.MainActivity;
 import com.example.shopify.R;
 import com.example.shopify.api.UserApi;
 import com.example.shopify.databinding.FragmentEditProfileBinding;
 import com.example.shopify.model.User;
 import com.example.shopify.model.UserResponse;
 import com.example.shopify.preferences.UserPreferences;
+import com.example.shopify.ui.cart.CartActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
@@ -52,6 +58,7 @@ public class EditProfileFragment extends Fragment {
                 inflater, R.layout.fragment_edit_profile, container, false);
         userPreferences = new UserPreferences(getContext());
         user = userPreferences.getUserLogin();
+        queue = Volley.newRequestQueue(this.getContext());
 
         try {
             if (user.getName() != null) {
@@ -66,6 +73,7 @@ public class EditProfileFragment extends Fragment {
         try {
             if (user.getEmail() != null) {
                 binding.etEmail.setText(user.getEmail());
+                binding.etEmail.setEnabled(false);
             } else {
                 binding.etEmail.setText("-");
             }
@@ -87,27 +95,31 @@ public class EditProfileFragment extends Fragment {
                 userPreferences.setUser(user.getId(),user.getName(),
                         user.getEmail(), user.getPassword(), user.getAccess_token());
                 updateProfile(user.getId());
+                Intent i = new Intent(getContext(), MainActivity.class);
+                startActivity(i);
             }
         });
 
         binding.btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_profile, new ProfileFragment()).commit();
+                Intent i = new Intent(getContext(), MainActivity.class);
+                startActivity(i);
             }
         });
     }
 
     private void updateProfile(long id) {
-        User user = new User(id, this.user.getName(), this.user.getEmail());
+        User user = new User(id, this.user.getName(), this.user.getEmail(),
+                binding.etPassword.getText().toString());
 
         StringRequest stringRequest = new StringRequest(PUT, UserApi.UPDATE_URL + id, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 UserResponse userResponse = gson.fromJson(response, UserResponse.class);
-
+                Toast.makeText(getContext(),
+                        userResponse.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -116,14 +128,19 @@ public class EditProfileFragment extends Fragment {
                     String responseBody = new String(error.networkResponse.data,
                             StandardCharsets.UTF_8);
                     JSONObject errors = new JSONObject(responseBody);
+                    Toast.makeText(getContext(),
+                            errors.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-
+                    Toast.makeText(getContext(),
+                            e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
+                String auth = "Bearer " + userPreferences.getUserLogin().getAccess_token();
+                headers.put("Authorization", auth);
                 headers.put("Accept", "application/json");
                 return headers;
             }

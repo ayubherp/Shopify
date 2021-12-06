@@ -148,7 +148,7 @@ public class AddEditActivity extends AppCompatActivity {
             binding.btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    updateProduk(id);
+                    updateItem(id);
                 }
             });
         }
@@ -339,7 +339,7 @@ public class AddEditActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void updateProduk(long id) {
+    private void updateItem(long id) {
         setLoading(true);
         Item item = new Item(String.valueOf(binding.etName.getText()),
                 String.valueOf(binding.etType.getText()),
